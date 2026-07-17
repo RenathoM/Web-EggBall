@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EggBall Strat Maker - Pro v2.2</title>
+    <style>
+        :root {
+            --bg-color: #1e1e24;
+            --panel-bg: #2b2b36;
+            --text-color: #ffffff;
+            --blue-team: #3b82f6;
+            --red-team: #ef4444;
+            --accent: #10b981;
+            --field-green: #529754;
+            --line-color: #f1f5f9;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar / Painel de Ferramentas */
+        .sidebar {
+            width: 320px;
+            background-color: var(--panel-bg);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            z-index: 20;
+        }
+
+        .sidebar h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+        }
+
+        .tool-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tool-group h3 {
+            font-size: 0.95rem;
+            margin: 10px 0 5px 0;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        button.tool-btn {
+            background-color: #3f3f4e;
+            color: white;
+            border: 2px solid transparent;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        button.tool-btn:hover { background-color: #4f4f62; }
+        
+        .btn-blue { border-left: 5px solid var(--blue-team); }
+        .btn-red { border-left: 5px solid var(--red-team); }
+        .btn-yellow { border-left: 5px solid #fbbf24; }
+        .btn-white { border-left: 5px solid #ffffff; }
+        
+        .active-draw-btn {
+            background-color: var(--accent) !important;
+            border-color: #fff !important;
+            color: #000 !important;
+        }
+
+        .instructions {
+            margin-top: auto;
+            font-size: 0.85rem;
+            color: #bbb;
+            background: #1a1a20;
+            padding: 15px;
+            border-radius: 5px;
+            line-height: 1.5;
+        }
+
+        .instructions b { color: var(--accent); }
+
+        /* Container da Direita (Abas + Campo) */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #121215;
+            position: relative; /* Necessário para o botão de feedback absoluto referenciar */
+        }
+
+        /* Sistema de Abas (Saves) */
+        .tabs-bar {
+            display: flex;
+            align-items: center;
+            background-color: #1a1a20;
+            padding: 10px 20px 0 20px;
+            gap: 5px;
+            border-bottom: 2px solid var(--panel-bg);
+            overflow-x: auto;
+            padding-right: 140px; /* Espaço para não encavalar com o botão de feedback */
+        }
+
+        .tab {
+            background-color: #3f3f4e;
+            color: #888;
+            padding: 10px 20px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            border-bottom: none;
+            user-select: none;
+        }
+
+        .tab:hover:not(.active) {
+            background-color: #4f4f62;
+            color: #ddd;
+        }
+
+        .tab.active {
+            background-color: var(--accent);
+            color: #000;
+            box-shadow: 0 -2px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .add-tab-btn {
+            background: transparent;
+            color: var(--accent);
+            border: 2px dashed var(--accent);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 5px;
+            margin-left: 10px;
+            transition: all 0.2s;
+        }
+
+        .add-tab-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Botão de Feedback no Topo Direito */
+        #feedback-btn {
+            position: absolute;
+            top: 6px;
+            right: 20px;
+            background-color: var(--blue-team);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #feedback-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Modal de Feedback */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--panel-bg);
+            padding: 30px;
+            border-radius: 10px;
+            width: 450px;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            border: 1px solid #4f4f62;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--text-color);
+            border-bottom: 2px solid var(--blue-team);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-content p {
+            color: #bbb;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            background-color: #1e1e24;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 20px;
+            resize: vertical;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+        
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: var(--blue-team);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Área do Campo */
+        .main-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .field-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .field {
+            position: relative;
+            width: 800px;
+            height: 450px;
+            background-color: var(--field-green);
+            border: 3px solid var(--line-color);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            box-sizing: border-box;
+        }
+
+        /* Marcações do Campo */
+        .center-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: var(--line-color);
+            transform: translateX(-50%);
+        }
+
+        .center-circle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 120px;
+            height: 120px;
+            border: 3px solid var(--line-color);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-sizing: border-box;
+        }
+
+        /* Gols e Traves */
+        .goal {
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 160px;
+            transform: translateY(-50%);
+            box-sizing: border-box;
+        }
+
+        .goal::before, .goal::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            z-index: 5;
+        }
+
+        .goal-left {
+            right: 100%;
+            border: 3px solid var(--red-team);
+            border-right: none;
+            background-color: rgba(239, 68, 68, 0.4);
+        }
+        .goal-left::before { top: -4px; right: -4px; }
+        .goal-left::after { bottom: -4px; right: -4px; }
+
+        .goal-right {
+            left: 100%;
+            border: 3px solid var(--blue-team);
+            border-left: none;
+            background-color: rgba(59, 130, 246, 0.4);
+        }
+        .goal-right::before { top: -4px; left: -4px; }
+        .goal-right::after { bottom: -4px; left: -4px; }
+
+        /* Camadas de Saves (Dinâmicas) */
+        #save-layers-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .save-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none; 
+        }
+        
+        .save-layer.active {
+            display: block; 
+        }
+
+        .drawing-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        /* ANIMAÇÃO DAS SETAS */
+        @keyframes march {
+            to { stroke-dashoffset: -20; }
+        }
+        
+        .anim-line {
+            stroke-dasharray: 10, 10;
+            animation: march 0.6s linear infinite;
+        }
+
+        .drawn-line {
+            pointer-events: visibleStroke;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .drawn-line:hover { opacity: 0.5; stroke-width: 6; }
+
+        /* Itens Arrastáveis */
+        .drag-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+        }
+
+        .drag-item {
+            position: absolute;
+            cursor: grab;
+            pointer-events: auto; 
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: translate(-50%, -50%);
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.6));
+            z-index: 10;
+        }
+
+        .drag-item:active { cursor: grabbing; }
+
+        .player-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-sizing: border-box;
+        }
+        .player-blue .player-circle { background-color: var(--blue-team); }
+        .player-red .player-circle { background-color: var(--red-team); }
+
+        .player-label-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(0,0,0,0.8);
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .player-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            white-space: nowrap;
+            outline: none; 
+            min-width: 20px;
+        }
+
+        .player-name[contenteditable="true"] {
+            background-color: rgba(255,255,255,0.2);
+            padding: 0 2px;
+            border-radius: 2px;
+            cursor: text;
+        }
+
+        .edit-icon {
+            font-size: 10px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        
+        .edit-icon:hover { opacity: 1; }
+
+        .ball {
+            width: 26px;
+            height: 26px;
+            background-color: white;
+            border-radius: 50%;
+            border: 2px solid #000;
+            box-shadow: inset -3px -3px 5px rgba(0,0,0,0.3);
+        }
+
+        .icon-item {
+            font-size: 26px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra lateral -->
+    <div class="sidebar">
+        <h1>EggBall Strats</h1>
+        
+        <div class="tool-group">
+            <h3>Jogadores (Max 8)</h3>
+            <button class="tool-btn btn-red" onclick="addElement('player-red')">Adicionar Vermelho</button>
+            <button class="tool-btn btn-blue" onclick="addElement('player-blue')">Adicionar Azul</button>
+        </div>
+
+        <div class="tool-group">
+            <h3>Objetos</h3>
+            <button class="tool-btn btn-white" onclick="addElement('ball')">⚽ Adicionar Bola</button>
+        </div>
+
+        <div class="tool-group">
+            <h3>Linhas (Segure e Arraste)</h3>
+            <button id="btn-draw-move" class="tool-btn btn-white" onclick="enableDrawingMode('move', '#ffffff', 'btn-draw-move')">
+                ↗️ Traçar Movimento (Branco)
+            </button>
+            <button id="btn-draw-kick" class="tool-btn btn-yellow" onclick="enableDrawingMode('kick', '#fbbf24', 'btn-draw-kick')">
+                🚀 Traçar Chute (Amarelo)
+            </button>
+        </div>
+
+        <div class="tool-group">
+            <h3>Símbolos Táticos</h3>
+            <button class="tool-btn" onclick="addElement('danger')">💀 Perigo</button>
+            <button class="tool-btn" onclick="addElement('freeze')">🧊 Congelar</button>
+            <button class="tool-btn" onclick="addElement('alert')">⚠️ Alerta</button>
+            <button class="tool-btn" onclick="addElement('pass')">👁️ Visão/Passe</button>
+            <button class="tool-btn" onclick="addElement('ping')">📍 Ping de Posição</button>
+        </div>
+
+        <div class="instructions">
+            <strong>Dicas de Uso:</strong><br>
+            • 🖱️ <b>Arrastar:</b> Clique e segure jogadores/ícones.<br>
+            • 🖱️ <b>Setas:</b> Selecione a cor, clique, segure e arraste no campo.<br>
+            • 🖱️🖱️ <b>Excluir:</b> Duplo clique em qualquer item ou linha.<br>
+            • ✏️ <b>Nome:</b> Clique no lápis do jogador para editar.<br>
+            • 🔙 <b>Desfazer:</b> Ctrl+Z | <b>Refazer:</b> Ctrl+Shift+Z
+        </div>
+    </div>
+
+    <!-- Área Principal (Direita) -->
+    <div class="content-area">
+        <!-- Botão de Feedback -->
+        <button id="feedback-btn" onclick="openFeedbackModal()">💬 Feedback</button>
+
+        <!-- Barra de Abas -->
+        <div class="tabs-bar" id="tabs-bar">
+            <!-- Abas injetadas via JS -->
+            <button class="add-tab-btn" onclick="addTab()">+ NOVO SAVE</button>
+        </div>
+
+        <!-- Campo -->
+        <div class="main-area">
+            <div class="field-wrapper">
+                <div class="field" id="field">
+                    <div class="goal goal-left"></div>
+                    <div class="goal goal-right"></div>
+                    <div class="center-line"></div>
+                    <div class="center-circle"></div>
+                    
+                    <svg style="width:0; height:0; position:absolute;">
+                        <defs id="svg-defs">
+                            <!-- <marker id="arrowhead-white" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#ffffff" />
+                            </marker>
+                            <marker id="arrowhead-yellow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24" />
+                            </marker> -->
+                        </defs>
+                    </svg>
+
+                    <!-- Container para os Saves -->
+                    <div id="save-layers-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Feedback -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>💬 Enviar Feedback</h2>
+            <p>Encontrou um bug, tem uma sugestão tática ou ideia para melhorar o Strat Maker? Conta pra gente!</p>
+            <textarea id="feedback-text" placeholder="Escreva seu feedback aqui..." rows="6"></textarea>
+            <div class="modal-buttons">
+                <button class="tool-btn btn-red" onclick="closeFeedbackModal()">Cancelar</button>
+                <button class="tool-btn btn-blue" id="submit-feedback-btn" onclick="submitFeedback()">Enviar para o Discord</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // INTEGRAÇÃO DE FEEDBACK (DISCORD WEBHOOK)
+        // ==========================================
+        const discordWebhookUrl = "https://discord.com/api/webhooks/1418572542607622154/Nf1wIq7nM41lSHiziL2TIKDbvoxlbFRg_62xGxYjnq-ngoRHTmRGN5eXp7Y288xKAsMi";
+
+        function openFeedbackModal() {
+            document.getElementById('feedback-modal').classList.add('active');
+            document.getElementById('feedback-text').focus();
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedback-modal').classList.remove('active');
+            document.getElementById('feedback-text').value = '';
+        }
+
+        async function submitFeedback() {
+            const textarea = document.getElementById('feedback-text');
+            const btn = document.getElementById('submit-feedback-btn');
+            const message = textarea.value.trim();
+
+            if (!message) {
+                alert("Por favor, digite alguma mensagem de feedback antes de enviar.");
+                textarea.focus();
+                return;
+            }
+
+            // Estado de carregamento
+            btn.innerText = "Enviando...";
+            btn.disabled = true;
+
+            const payload = {
+                embeds: [{
+                    title: "🚀 Novo Feedback Recebido!",
+                    description: message,
+                    color: 3899062, // Azul correspondente ao botão
+                    footer: { text: "EggBall Strat Maker v2.2" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                const response = await fetch(discordWebhookUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert("Seu feedback foi enviado com sucesso! Muito obrigado.");
+                    closeFeedbackModal();
+                } else {
+                    alert("Ops! Houve um erro ao enviar seu feedback. Tente novamente mais tarde.");
+                }
+            } catch (error) {
+                console.error("Erro ao enviar webhook:", error);
+                alert("Erro de conexão ao tentar enviar. Verifique sua internet.");
+            } finally {
+                btn.innerText = "Enviar para o Discord";
+                btn.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // VARIÁVEIS E INICIALIZAÇÃO BASE DO CAMPO
+        // ==========================================
+        const field = document.getElementById('field');
+        const tabsBar = document.getElementById('tabs-bar');
+        const layersContainer = document.getElementById('save-layers-container');
+        
+        let tabCount = 0;
+        let activeTabId = null;
+
+        // ==========================================
+        // SISTEMA DE HISTÓRICO (UNDO / REDO)
+        // ==========================================
+        const history = {};
+
+        function initHistory(tabId) {
+            if (!history[tabId]) {
+                history[tabId] = { past: [], future: [] };
+            }
+        }
+
+        function saveState(tabId) {
+            if (!tabId) return;
+            initHistory(tabId);
+            const layer = document.getElementById(`layer-${tabId}`);
+            if (!layer) return;
+            
+            const currentState = layer.innerHTML;
+            const past = history[tabId].past;
+            
+            if (past.length === 0 || past[past.length - 1] !== currentState) {
+                past.push(currentState);
+                if (past.length > 50) past.shift();
+                history[tabId].future = []; 
+            }
+        }
+
+        function undo() {
+            if (!activeTabId || !history[activeTabId]) return;
+            const past = history[activeTabId].past;
+            const future = history[activeTabId].future;
+            
+            if (past.length > 1) { 
+                const currentState = past.pop();
+                future.push(currentState);
+                const previousState = past[past.length - 1];
+                document.getElementById(`layer-${activeTabId}`).innerHTML = previousState;
+            }
+        }
+
+        function redo() {
+            if (!activeTabId || !history[activeTabId]) return;
+            const past = history[activeTabId].past;
+            const future = history[activeTabId].future;
+            
+            if (future.length > 0) {
+                const nextState = future.pop();
+                past.push(nextState);
+                document.getElementById(`layer-${activeTabId}`).innerHTML = nextState;
+            }
+        }
+
+        // ==========================================
+        // SISTEMA DE ABAS (SAVES)
+        // ==========================================
+        function addTab() {
+            if (tabCount >= 10) {
+                alert("Limite máximo de 10 Saves atingido!");
+                return;
+            }
+            cancelDrawingMode();
+            tabCount++;
+            const tabId = `save-${tabCount}`;
+
+            const tabBtn = document.createElement('div');
+            tabBtn.className = 'tab';
+            tabBtn.id = `btn-${tabId}`;
+            tabBtn.innerText = `SAVE ${tabCount}`;
+            tabBtn.onclick = () => switchTab(tabId);
+            
+            tabsBar.insertBefore(tabBtn, tabsBar.lastElementChild);
+
+            const layer = document.createElement('div');
+            layer.className = 'save-layer';
+            layer.id = `layer-${tabId}`;
+            layer.innerHTML = `
+                <svg class="drawing-layer"></svg>
+                <div class="drag-layer"></div>
+            `;
+            layersContainer.appendChild(layer);
+
+            initHistory(tabId);
+            saveState(tabId); 
+            switchTab(tabId);
+        }
+
+        function switchTab(tabId) {
+            cancelDrawingMode();
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.save-layer').forEach(l => l.classList.remove('active'));
+
+            document.getElementById(`btn-${tabId}`).classList.add('active');
+            document.getElementById(`layer-${tabId}`).classList.add('active');
+            
+            activeTabId = tabId;
+        }
+
+        function getActiveDragLayer() { return document.querySelector(`#layer-${activeTabId} .drag-layer`); }
+        function getActiveDrawLayer() { return document.querySelector(`#layer-${activeTabId} .drawing-layer`); }
+
+        // ==========================================
+        // ADIÇÃO DE ELEMENTOS 
+        // ==========================================
+        function addElement(type) {
+            cancelDrawingMode();
+            const activeDragLayer = getActiveDragLayer();
+            const currentPlayers = activeDragLayer.querySelectorAll('[data-is-player="true"]').length;
+
+            if ((type === 'player-blue' || type === 'player-red') && currentPlayers >= 8) {
+                alert("Limite máximo de 8 jogadores neste Save!");
+                return;
+            }
+
+            const el = document.createElement('div');
+            el.className = 'drag-item';
+            el.style.left = '50%';
+            el.style.top = '50%';
+
+            if (type === 'player-blue' || type === 'player-red') {
+                el.classList.add(type);
+                el.dataset.isPlayer = "true";
+                el.innerHTML = `
+                    <div class="player-circle"></div>
+                    <div class="player-label-container">
+                        <span class="player-name">Jogador</span>
+                        <span class="edit-icon" title="Editar Nome">✏️</span>
+                    </div>
+                `;
+            } 
+            else if (type === 'ball') {
+                el.innerHTML = `<div class="ball"></div>`;
+            } 
+            else {
+                el.classList.add('icon-item');
+                const icons = { 'danger': '💀', 'freeze': '🧊', 'alert': '⚠️', 'pass': '👁️', 'ping': '📍' };
+                el.innerHTML = icons[type];
+            }
+
+            activeDragLayer.appendChild(el);
+            saveState(activeTabId);
+        }
+
+        // ==========================================
+        // EVENTOS DELEGADOS GLOBAIS
+        // ==========================================
+        
+        // Exclusão por Duplo Clique
+        document.addEventListener('dblclick', (e) => {
+            const dragItem = e.target.closest('.drag-item');
+            const drawnLine = e.target.closest('.drawn-line');
+            if (dragItem) {
+                dragItem.remove();
+                saveState(activeTabId);
+            } else if (drawnLine) {
+                drawnLine.remove();
+                saveState(activeTabId);
+            }
+        });
+
+        // Clique no Lápis para Edição de Nome
+        document.addEventListener('click', (e) => {
+            const editIcon = e.target.closest('.edit-icon');
+            if (editIcon) {
+                const nameSpan = editIcon.previousElementSibling;
+                if (nameSpan && nameSpan.classList.contains('player-name')) {
+                    nameSpan.contentEditable = true;
+                    nameSpan.focus();
+                    const range = document.createRange();
+                    range.selectNodeContents(nameSpan);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+            }
+        });
+
+        // Eventos para o Input de Nome
+        document.addEventListener('focusout', (e) => {
+            if (e.target.classList.contains('player-name')) {
+                e.target.contentEditable = false;
+                if(e.target.innerText.trim() === '') e.target.innerText = 'Jogador';
+                saveState(activeTabId);
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.classList.contains('player-name')) {
+                if(e.key === 'Enter') {
+                    e.preventDefault();
+                    e.target.blur(); 
+                }
+                if(e.target.innerText.length >= 8 && e.key !== 'Backspace' && e.key !== 'Delete' && !e.ctrlKey && !e.metaKey) {
+                    e.preventDefault();
+                }
+            }
+        });
+
+        // Atalhos de Teclado (Control-Z e Shift-Control-Z / Control-Y)
+        document.addEventListener('keydown', (e) => {
+            if (e.target.isContentEditable || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                if (e.shiftKey) redo();
+                else undo();
+            } else if (e.ctrlKey && e.key.toLowerCase() === 'y') {
+                e.preventDefault();
+                redo();
+            }
+        });
+
+        // ==========================================
+        // LÓGICA DE DRAG & DROP E DESENHO
+        // ==========================================
+        let isDragging = false;
+        let currentDragElement = null;
+        let wasDragged = false;
+
+        let drawingMode = null; 
+        let isDrawing = false;
+        let tempSvgLine = null;
+
+        function enableDrawingMode(type, color, btnId) {
+            cancelDrawingMode();
+            drawingMode = { type, color, btnId };
+            field.style.cursor = 'crosshair';
+            document.getElementById(btnId).classList.add('active-draw-btn');
+        }
+
+        function cancelDrawingMode() {
+            if (drawingMode) {
+                document.getElementById(drawingMode.btnId).classList.remove('active-draw-btn');
+            }
+            drawingMode = null;
+            isDrawing = false;
+            field.style.cursor = 'default';
+            if (tempSvgLine) {
+                tempSvgLine.remove();
+                tempSvgLine = null;
+            }
+        }
+
+        field.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.player-label-container')) return;
+
+            if (drawingMode) {
+                const fieldRect = field.getBoundingClientRect();
+                const clickX = e.clientX - fieldRect.left;
+                const clickY = e.clientY - fieldRect.top;
+                
+                isDrawing = true;
+                const xmlns = "http://www.w3.org/2000/svg";
+                tempSvgLine = document.createElementNS(xmlns, "line");
+                tempSvgLine.setAttribute("x1", clickX);
+                tempSvgLine.setAttribute("y1", clickY);
+                tempSvgLine.setAttribute("x2", clickX);
+                tempSvgLine.setAttribute("y2", clickY);
+                tempSvgLine.setAttribute("stroke", drawingMode.color);
+                tempSvgLine.setAttribute("stroke-width", "4");
+                tempSvgLine.setAttribute("class", "anim-line drawn-line");
+                
+                const marker = drawingMode.type === 'kick' ? 'url(#arrowhead-yellow)' : 'url(#arrowhead-white)';
+                tempSvgLine.setAttribute("marker-end", marker);
+                
+                getActiveDrawLayer().appendChild(tempSvgLine);
+                e.preventDefault();
+            } else {
+                const dragItem = e.target.closest('.drag-item');
+                if (dragItem) {
+                    isDragging = true;
+                    currentDragElement = dragItem;
+                    currentDragElement.style.zIndex = 1000;
+                    wasDragged = false;
+                }
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDrawing && tempSvgLine) {
+                const fieldRect = field.getBoundingClientRect();
+                const mouseX = e.clientX - fieldRect.left;
+                const mouseY = e.clientY - fieldRect.top;
+                
+                tempSvgLine.setAttribute("x2", mouseX);
+                tempSvgLine.setAttribute("y2", mouseY);
+            } else if (isDragging && currentDragElement) {
+                const fieldRect = field.getBoundingClientRect();
+                let newLeft = e.clientX - fieldRect.left;
+                let newTop = e.clientY - fieldRect.top;
+
+                newLeft = Math.max(-50, Math.min(newLeft, fieldRect.width + 50));
+                newTop = Math.max(-20, Math.min(newTop, fieldRect.height + 20));
+
+                currentDragElement.style.left = `${newLeft}px`;
+                currentDragElement.style.top = `${newTop}px`;
+                wasDragged = true;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDrawing && tempSvgLine) {
+                isDrawing = false;
+                tempSvgLine = null;
+                cancelDrawingMode();
+                saveState(activeTabId); 
+            }
+
+            if (currentDragElement) {
+                currentDragElement.style.zIndex = "10";
+                if (wasDragged) {
+                    saveState(activeTabId);
+                }
+                isDragging = false;
+                currentDragElement = null;
+                wasDragged = false;
+            }
+        });
+
+        // Inicializa primeira aba
+        addTab();
+
+    </script>
+</body>
+</html>
