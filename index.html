@@ -87,7 +87,7 @@
         .tab:hover .tab-delete-zone { opacity: 1; }
 
         .add-tab-btn { background: transparent; color: var(--accent); border: 2px dashed var(--accent); padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 5px; margin-left: 10px; transition: all 0.2s; }
-        .add-tab-btn:hover { background: rgba(16, 185, 129, 0.2); }
+        .add-tab-btn:hover { background: rgba(0, 255, 170, 0.2); }
 
         .header-actions { display: flex; gap: 10px; align-items: center; padding-bottom: 10px; }
         .header-actions select, .header-actions button {
@@ -126,7 +126,7 @@
         .toast-warn { background-color: #f59e0b; }
 
         .loader {
-            border: 5px solid rgba(255,255,255,0.2); border-top: 5px solid white;
+            border: 5px solid rgba(255, 0, 0, 0.2); border-top: 5px solid white;
             border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -135,10 +135,10 @@
         .community-container { flex: 1; overflow-y: auto; padding: 10px; }
         .community-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
         .layout-card { 
-            background: #1e1e24; border-radius: 8px; border: 1px solid #444; overflow: hidden; 
+            background: #1e1e24; border-radius: 8px; border: 1px solid #ffffff; overflow: hidden; 
             transition: all 0.2s; position: relative; cursor: pointer;
         }
-        .layout-card:hover { transform: translateY(-5px); border-color: #a855f7; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .layout-card:hover { transform: translateY(-5px); border-color: #7f7f7f; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .layout-card.selected-for-override { border: 3px solid var(--accent); background: rgba(16, 185, 129, 0.1); }
         .layout-thumb { width: 100%; height: 140px; background: #000; object-fit: cover; border-bottom: 1px solid #333; }
         .layout-info { padding: 12px; }
@@ -199,6 +199,50 @@
         .ball { width: 26px; height: 26px; background-color: white; border-radius: 50%; border: 2px solid #000; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.3); }
         .icon-item { font-size: 26px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
         .hide-on-print { opacity: 1 !important; }
+
+        /* Minimalist Footer */
+        .minimal-footer {
+            position: fixed;
+            bottom: 15px;
+            right: 20px;
+            z-index: 1500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            user-select: none;
+        }
+        .minimal-footer a.atlas-link {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .minimal-footer a.atlas-link:hover {
+            color: var(--accent);
+        }
+        .footer-discord-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 11px;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-discord-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -215,7 +259,7 @@
             <button class="tool-btn btn-white" onclick="addElement('ball')" id="btn-add-ball">⚽ Adicionar Bola</button>
         </div>
         <div class="tool-group">
-            <h3 id="group-lines">Linhas (🐞)</h3>
+            <h3 id="group-lines">Linhas</h3>
             <button id="btn-draw-move" class="tool-btn btn-white" onclick="enableDrawingMode('move', '#ffffff', 'btn-draw-move')">↗️ Traçar Movimento</button>
             <button id="btn-draw-kick" class="tool-btn btn-yellow" onclick="enableDrawingMode('kick', '#fbbf24', 'btn-draw-kick')">🚀 Traçar Chute</button>
         </div>
@@ -242,6 +286,11 @@
                 <select id="lang-select" onchange="changeLanguage()">
                     <option value="pt">PT-BR</option>
                     <option value="en">EN-US</option>
+                    <option value="es">ESPAÑOL</option>
+                    <option value="fr">FRANÇAIS</option>
+                    <option value="it">ITALIANO</option>
+                    <option value="zh">中文</option>
+                    <option value="ru">РУССКИЙ</option>
                 </select>
                 <button id="feedback-btn" onclick="openFeedbackModal()">💬 Feedback</button>
                 <button id="community-btn" onclick="openCommunityModal()">🌍 Comunidade</button>
@@ -271,10 +320,10 @@
             <div class="modal-header">
                 <h2 id="modal-title-feedback">Enviar Feedback</h2>
             </div>
-            <textarea id="feedback-text" class="feedback-input" placeholder="Descreva um bug ou sugira uma idea..."></textarea>
+            <textarea id="feedback-text" class="feedback-input" placeholder="Descreva um bug ou sugira uma ideia..."></textarea>
             <div style="display:flex; justify-content:flex-end; gap:10px;">
-                <button class="tool-btn" onclick="closeFeedbackModal()">Cancelar</button>
-                <button class="tool-btn btn-blue" onclick="sendFeedbackWebhook()">Enviar</button>
+                <button class="tool-btn" id="btn-cancel-feedback" onclick="closeFeedbackModal()">Cancelar</button>
+                <button class="tool-btn btn-blue" id="btn-send-feedback" onclick="sendFeedbackWebhook()">Enviar</button>
             </div>
         </div>
     </div>
@@ -287,8 +336,8 @@
             </div>
             <p id="modal-desc-layout" style="margin-bottom: 20px;">Deseja adicionar este layout ao seu palco de edições?</p>
             <div style="display:flex; justify-content:flex-end; gap:10px;">
-                <button class="tool-btn" onclick="closeLayoutActionModal()">Cancelar</button>
-                <button class="tool-btn btn-blue" onclick="confirmLayoutAdd()">Adicionar</button>
+                <button class="tool-btn" id="btn-cancel-layout" onclick="closeLayoutActionModal()">Cancelar</button>
+                <button class="tool-btn btn-blue" id="btn-confirm-layout" onclick="confirmLayoutAdd()">Adicionar</button>
             </div>
         </div>
     </div>
@@ -308,7 +357,7 @@
             </div>
             <p id="modal-desc-delete" style="margin-bottom: 20px;">Deseja realmente excluir este save permanentemente?</p>
             <div style="display:flex; justify-content:flex-end; gap:10px;">
-                <button class="tool-btn" onclick="closeDeleteModal()">Cancelar</button>
+                <button class="tool-btn" id="btn-cancel-delete" onclick="closeDeleteModal()">Cancelar</button>
                 <button class="tool-btn btn-red" id="confirm-delete-btn">Excluir</button>
             </div>
         </div>
@@ -333,32 +382,222 @@
         </div>
     </div>
 
+    <!-- Minimalist Footer Area -->
+    <div class="minimal-footer hide-on-print">
+        <span>Site made by <a href="https://guns.lol/renathom" target="_blank" class="atlas-link">Atlas (impulssivo)</a></span>
+        <a href="https://discord.gg/wyCtFqdUvM" target="_blank" class="footer-discord-btn">Sohrab Studios</a>
+    </div>
+
     <script>
         function playSound(type = 'pop') {}
 
         // ==========================================
-        // TRADUÇÃO DAS DICAS & INTERFACE (Nome base traduzido para Player)
+        // DICIONÁRIO MULTILINGUE EXPANDIDO
         // ==========================================
         const dict = {
             pt: {
                 title: "Dicas:", l1: "• 🖱️ <b>Arrastar:</b> Segure nos itens/pontas.", l2: "• 🔀 <b>Curvar:</b> Clique DIREITO em uma seta!", l3: "• 🗑️ <b>Excluir:</b> Duplo clique no item.",
-                groups: ["Jogadores (Max 8)", "Objetos", "Linhas (🐞)", "Símbolos Táticos"],
+                groups: ["Jogadores (Max 8)", "Objetos", "Linhas", "Símbolos Táticos"],
                 btns: ["Adicionar Vermelho", "Adicionar Azul", "⚽ Adicionar Bola", "↗️ Traçar Movimento", "🚀 Traçar Chute", "💀 Perigo", "🧊 Congelar", "⚠️ Alerta"],
                 top: ["+ NOVO SAVE", "💬 Feedback", "🌍 Comunidade", "📸 Capturar Imagem", "online"],
-                player_def: "Jogador"
+                player_def: "Jogador", save_prefix: "SAVE",
+                modals: {
+                    feedback_title: "Enviar Feedback", feedback_placeholder: "Descreva um bug ou sugira uma ideia...", cancel: "Cancelar", send: "Enviar",
+                    layout_title: "Ação de Layout", layout_desc: "Deseja adicionar este layout ao seu palco de edições?", add: "Adicionar",
+                    delete_title: "Excluir Save?", delete_desc: "Deseja realmente excluir este save permanentemente?", delete_confirm: "Excluir",
+                    community_title: "🌍 Layouts da Comunidade", publish_btn: "+ Publicar Meu Save Atual", publish_admin: "🔄 Republicar Layout Selecionado",
+                    admin_warning: "⚠️ Selecione um layout abaixo para substituir/republicar!"
+                },
+                toasts: {
+                    max_tabs: "Máximo de saves atingido", write_something: "Escreva algo primeiro", fb_success: "Feedback enviado com sucesso!", fb_error: "Erro ao enviar webhook",
+                    tab_deleted: "Aba apagada", conn_error: "Erro de conexão.", no_layouts: "Ainda não há nenhuma publicação",
+                    layout_selected_admin: "Layout da comunidade selecionado para reescrita!", own_like_error: "Você não pode curtir sua obra", already_liked_error: "Você já curtiu este layout!",
+                    admin_likes_prompt: "Definir exato de curtidas:", admin_del_confirm: "Confirmar EXCLUSÃO permanente deste layout do Supabase?",
+                    admin_del_success: "Layout excluído do Supabase com sucesso", admin_del_error: "Erro ao excluir do Supabase",
+                    admin_author_prompt: "Modificar nome do autor deste layout:", admin_author_success: "Nome do autor modificado!", admin_author_error: "Erro ao editar nome",
+                    admin_edit_mode: "Modo de Edição Ativo. Republicar atualizará este layout na comunidade.", publish_cooldown: "Aguarde 1 min entre publicações.",
+                    publish_prompt_user: "Insira seu nome de usuário para publicar:", publish_admin_success: "Layout da comunidade substituído/republicado com sucesso!",
+                    publish_success: "Publicado na Comunidade!", publish_error: "Erro ao publicar.", load_success: "Layout carregado!", load_error: "Falha na carga",
+                    screenshot_processing: "⏳ Processando...", screenshot_success: "✅ Imagem copiada para Área de Transferência!", screenshot_error: "Erro na captura",
+                    admin_granted: "Modo de Administração Concedido", admin_denied: "Acesso Negado", admin_code_prompt: "Código Administrativo:"
+                },
+                by_author: "Por: "
             },
             en: {
                 title: "Tips:", l1: "• 🖱️ <b>Drag:</b> Hold items/edges.", l2: "• 🔀 <b>Curve:</b> RIGHT CLICK on an arrow!", l3: "• 🗑️ <b>Delete:</b> Double click an item.",
-                groups: ["Players (Max 8)", "Objects", "Lines (🐞)", "Tactical Symbols"],
+                groups: ["Players (Max 8)", "Objects", "Lines", "Tactical Symbols"],
                 btns: ["Add Red", "Add Blue", "⚽ Add Ball", "↗️ Draw Move", "🚀 Draw Kick", "💀 Danger", "🧊 Freeze", "⚠️ Alert"],
                 top: ["+ NEW SAVE", "💬 Feedback", "🌍 Community", "📸 Screenshot", "online"],
-                player_def: "Player"
+                player_def: "Player", save_prefix: "SAVE",
+                modals: {
+                    feedback_title: "Send Feedback", feedback_placeholder: "Describe a bug or suggest an idea...", cancel: "Cancel", send: "Send",
+                    layout_title: "Layout Action", layout_desc: "Do you want to add this layout to your editor workspace?", add: "Add",
+                    delete_title: "Delete Save?", delete_desc: "Are you sure you want to permanently delete this save?", delete_confirm: "Delete",
+                    community_title: "🌍 Community Layouts", publish_btn: "+ Publish Current Save", publish_admin: "🔄 Republish Selected Layout",
+                    admin_warning: "⚠️ Select a layout below to replace/republish!"
+                },
+                toasts: {
+                    max_tabs: "Maximum saves reached", write_something: "Write something first", fb_success: "Feedback sent successfully!", fb_error: "Error sending webhook",
+                    tab_deleted: "Tab deleted", conn_error: "Connection error.", no_layouts: "No publications yet",
+                    layout_selected_admin: "Community layout selected for rewrite!", own_like_error: "You cannot like your own work", already_liked_error: "You already liked this layout!",
+                    admin_likes_prompt: "Set exact likes count:", admin_del_confirm: "Confirm permanent DELETION of this layout from Supabase?",
+                    admin_del_success: "Layout successfully deleted from Supabase", admin_del_error: "Error deleting from Supabase",
+                    admin_author_prompt: "Modify author name for this layout:", admin_author_success: "Author name modified!", admin_author_error: "Error editing name",
+                    admin_edit_mode: "Editing Mode Active. Republishing will update this layout in the community.", publish_cooldown: "Wait 1 min between publications.",
+                    publish_prompt_user: "Enter your username to publish:", publish_admin_success: "Community layout replaced/republished successfully!",
+                    publish_success: "Published to Community!", publish_error: "Error publishing.", load_success: "Layout loaded!", load_error: "Load failed",
+                    screenshot_processing: "⏳ Processing...", screenshot_success: "✅ Image copied to Clipboard!", screenshot_error: "Capture error",
+                    admin_granted: "Administrative Mode Granted", admin_denied: "Access Denied", admin_code_prompt: "Administrative Code:"
+                },
+                by_author: "By: "
+            },
+            es: {
+                title: "Consejos:", l1: "• 🖱️ <b>Arrastrar:</b> Mantén presionado en ítems/puntas.", l2: "• 🔀 <b>Curvar:</b> ¡Click DERECHO en una flecha!", l3: "• 🗑️ <b>Eliminar:</b> Doble click en el ítem.",
+                groups: ["Jugadores (Máx 8)", "Objetos", "Líneas", "Símbolos Tácticos"],
+                btns: ["Añadir Rojo", "Añadir Azul", "⚽ Añadir Balón", "↗️ Trazar Movimiento", "🚀 Trazar Chute", "💀 Peligro", "🧊 Congelar", "⚠️ Alerta"],
+                top: ["+ NUEVO SAVE", "💬 Feedback", "🌍 Comunidad", "📸 Capturar Imagen", "en línea"],
+                player_def: "Jugador", save_prefix: "SAVE",
+                modals: {
+                    feedback_title: "Enviar Feedback", feedback_placeholder: "Describe un error o sugiere una idea...", cancel: "Cancelar", send: "Enviar",
+                    layout_title: "Acción de Diseño", layout_desc: "¿Deseas añadir este diseño a tu espacio de edición?", add: "Añadir",
+                    delete_title: "¿Eliminar Save?", delete_desc: "¿Realmente deseas eliminar este save permanentemente?", delete_confirm: "Eliminar",
+                    community_title: "🌍 Diseños de la Comunidad", publish_btn: "+ Publicar Mi Save Actual", publish_admin: "🔄 Republicar Diseño Seleccionado",
+                    admin_warning: "⚠️ ¡Selecciona un diseño abajo para reemplazar/republicar!"
+                },
+                toasts: {
+                    max_tabs: "Máximo de saves alcanzado", write_something: "Escribe algo primeiro", fb_success: "¡Feedback enviado con éxito!", fb_error: "Error al enviar webhook",
+                    tab_deleted: "Pestaña eliminada", conn_error: "Error de conexión.", no_layouts: "Aún no hay publicaciones",
+                    layout_selected_admin: "¡Diseño de la comunidad seleccionado para sobrescribir!", own_like_error: "No puedes darle me gusta a tu propia obra", already_liked_error: "¡Ya te ha gustado este diseño!",
+                    admin_likes_prompt: "Definir número exacto de me gusta:", admin_del_confirm: "¿Confirmar ELIMINACIÓN permanente de este diseño en Supabase?",
+                    admin_del_success: "Diseño eliminado de Supabase con éxito", admin_del_error: "Error al eliminar de Supabase",
+                    admin_author_prompt: "Modificar nombre del autor de este diseño:", admin_author_success: "¡Nombre del autor modificado!", admin_author_error: "Error al editar el nombre",
+                    admin_edit_mode: "Modo de edición activo. Republicar actualizará este diseño en la comunidad.", publish_cooldown: "Espera 1 min entre publicaciones.",
+                    publish_prompt_user: "Ingresa tu nombre de usuario para publicar:", publish_admin_success: "¡Diseño de la comunidad reemplazado/republicado con éxito!",
+                    publish_success: "¡Publicado en la Comunidad!", publish_error: "Error al publicar.", load_success: "¡Diseño cargado!", load_error: "Fallo al cargar",
+                    screenshot_processing: "⏳ Procesando...", screenshot_success: "✅ ¡Imagen copiada al Portapapeles!", screenshot_error: "Error en la captura",
+                    admin_granted: "Modo de Administración Concedido", admin_denied: "Accesso Denegado", admin_code_prompt: "Código Administrativo:"
+                },
+                by_author: "Por: "
+            },
+            fr: {
+                title: "Conseils:", l1: "• 🖱️ <b>Glisser:</b> Maintenez les éléments/extrémités.", l2: "• 🔀 <b>Courber:</b> Clic DROIT sur une flèche !", l3: "• 🗑️ <b>Supprimer:</b> Double-clic sur l'élément.",
+                groups: ["Joueurs (Max 8)", "Objets", "Lignes", "Symboles Tactiques"],
+                btns: ["Ajouter Rouge", "Ajouter Bleu", "⚽ Ajouter Ballon", "↗️ Tracer Mouvement", "🚀 Tracer Tir", "💀 Danger", "🧊 Geler", "⚠️ Alerte"],
+                top: ["+ NOUVEAU SAVE", "💬 Feedback", "🌍 Communauté", "📸 Capture d'écran", "en ligne"],
+                player_def: "Joueur", save_prefix: "SAVE",
+                modals: {
+                    feedback_title: "Envoyer un Feedback", feedback_placeholder: "Décrivez un bug ou suggérez une idée...", cancel: "Annuler", send: "Envoyer",
+                    layout_title: "Action de Mise en Page", layout_desc: "Voulez-vous ajouter cette mise en page à votre espace de travail ?", add: "Ajouter",
+                    delete_title: "Supprimer le Save ?", delete_desc: "Voulez-vous vraiment supprimer définitivement ce save ?", delete_confirm: "Supprimer",
+                    community_title: "🌍 Mises en Page de la Communauté", publish_btn: "+ Publier Mon Save Actuel", publish_admin: "🔄 Republier la Mise en Page Sélectionnée",
+                    admin_warning: "⚠️ Sélectionnez une mise en page ci-dessous pour la remplacer/republier !"
+                },
+                toasts: {
+                    max_tabs: "Maximum de sauvegardes atteint", write_something: "Veuillez écrire quelque chose d'abord", fb_success: "Feedback envoyé avec succès !", fb_error: "Erreur lors de l'envoi du webhook",
+                    tab_deleted: "Onglet supprimé", conn_error: "Erreur de connexion.", no_layouts: "Aucune publication pour le moment",
+                    layout_selected_admin: "Mise en page de la communauté sélectionnée pour réécriture !", own_like_error: "Vous ne pouvez pas aimer votre propre œuvre", already_liked_error: "Vous avez déjà aimé cette mise en page !",
+                    admin_likes_prompt: "Définir le nombre exact de likes :", admin_del_confirm: "Confirmer la SUPPRESSION définitive de cette mise en page de Supabase ?",
+                    admin_del_success: "Mise en page supprimée de Supabase avec succès", admin_del_error: "Erreur lors de la suppression de Supabase",
+                    admin_author_prompt: "Modifier le nom de l'auteur pour cette mise en page :", admin_author_success: "Nom de l'auteur modifié !", admin_author_error: "Erreur lors de la modification du nom",
+                    admin_edit_mode: "Mode d'édition actif. La republication mettra à jour cette mise en page dans la communauté.", publish_cooldown: "Veuillez attendre 1 min entre les publications.",
+                    publish_prompt_user: "Entrez votre nom d'utilisateur pour publier :", publish_admin_success: "Mise en page de la communauté remplacée/republiée avec succès !",
+                    publish_success: "Publié dans la Communauté !", publish_error: "Erreur lors de la publication.", load_success: "Mise en page chargée !", load_error: "Échec du chargement",
+                    screenshot_processing: "⏳ Traitement...", screenshot_success: "✅ Image copiée dans le Presse-papiers !", screenshot_error: "Erreur de capture",
+                    admin_granted: "Mode Administration Accordé", admin_denied: "Accès Refusé", admin_code_prompt: "Code Administratif :"
+                },
+                by_author: "Par: "
+            },
+            it: {
+                title: "Suggerimenti:", l1: "• 🖱️ <b>Trascina:</b> Tieni premuto su elementi/punte.", l2: "• 🔀 <b>Curva:</b> Tasto DESTRO su una freccia!", l3: "• 🗑️ <b>Elimina:</b> Doppio click sull'elemento.",
+                groups: ["Giocatori (Max 8)", "Oggetti", "Linee", "Simboli Tattici"],
+                btns: ["Aggiungi Rosso", "Aggiungi Blu", "⚽ Aggiungi Palla", "↗️ Traccia Movimento", "🚀 Traccia Tiro", "💀 Pericolo", "🧊 Congela", "⚠️ Avviso"],
+                top: ["+ NUOVO SAVE", "💬 Feedback", "🌍 Community", "📸 Cattura Immagine", "online"],
+                player_def: "Giocatore", save_prefix: "SAVE",
+                modals: {
+                    feedback_title: "Invia Feedback", feedback_placeholder: "Descrivi un bug o suggerisci un'idea...", cancel: "Annulla", send: "Invia",
+                    layout_title: "Azione Layout", layout_desc: "Vuoi aggiungere questo layout al tuo spazio di modifica?", add: "Aggiungi",
+                    delete_title: "Eliminare Save?", delete_desc: "Vuoi davvero eliminare permanentemente questo save?", delete_confirm: "Elimina",
+                    community_title: "🌍 Layout della Community", publish_btn: "+ Pubblica Il Mio Save Attuale", publish_admin: "🔄 Ripubblica il Layout Selezionato",
+                    admin_warning: "⚠️ Seleziona un layout qui sotto si desidera sostituirlo/ripubblicarlo!"
+                },
+                toasts: {
+                    max_tabs: "Massimo numero di salvataggi raggiunto", write_something: "Scrivi qualcosa prima", fb_success: "Feedback inviato con successo!", fb_error: "Errore nell'invio del webhook",
+                    tab_deleted: "Scheda eliminata", conn_error: "Errore di connessione.", no_layouts: "Nessuna pubblicazione disponibile",
+                    layout_selected_admin: "Layout della community selezionato per la riscrittura!", own_like_error: "Non puoi mettere mi piace alla tua stessa opera", already_liked_error: "Hai già messo mi piace a questo layout!",
+                    admin_likes_prompt: "Imposta il numero esatto di mi piace:", admin_del_confirm: "Confermare l'ELIMINAZIONE permanente di questo layout da Supabase?",
+                    admin_del_success: "Layout eliminato con successo da Supabase", admin_del_error: "Errore durante l'eliminazione da Supabase",
+                    admin_author_prompt: "Modifica il nome dell'autore per questo layout:", admin_author_success: "Nome dell'autore modificato!", admin_author_error: "Errore nella modifica del nome",
+                    admin_edit_mode: "Modalità di modifica attiva. La ripubblicazione aggiornerà questo layout nella community.", publish_cooldown: "Attendi 1 minuto tra le pubblicazioni.",
+                    publish_prompt_user: "Inserisci il tuo nome utente per pubblicare:", publish_admin_success: "Layout della community sostituito/ripubblicato con successo!",
+                    publish_success: "Pubblicato nella Community!", publish_error: "Errore durante la pubblicazione.", load_success: "Layout cargato!", load_error: "Caricamento fallito",
+                    screenshot_processing: "⏳ Elaborazione...", screenshot_success: "✅ Immagine copiata negli Appunti!", screenshot_error: "Errore di cattura",
+                    admin_granted: "Modalità Amministratore Concessa", admin_denied: "Accesso Negato", admin_code_prompt: "Codice Amministrativo:"
+                },
+                by_author: "Da: "
+            },
+            zh: {
+                title: "提示:", l1: "• 🖱️ <b>拖拽:</b> 按住元素/箭头两端移动。", l2: "• 🔀 <b>弧线:</b> 在箭头上右击调整弧度！", l3: "• 🗑️ <b>删除:</b> 双击元素即可删除。",
+                groups: ["球员 (最多8人)", "物品", "线条", "战术符号"],
+                btns: ["添加红色", "添加蓝色", "⚽ 添加足球", "↗️ 绘制移动", "🚀 绘制射门", "💀 危险", "🧊 冻结", "⚠️ 警告"],
+                top: ["+ 新建存档", "💬 反馈", "🌍 社区", "📸 截取图像", "在线"],
+                player_def: "球员", save_prefix: "存档",
+                modals: {
+                    feedback_title: "发送反馈", feedback_placeholder: "请描述bug或提出建议...", cancel: "取消", send: "发送",
+                    layout_title: "布局操作", layout_desc: "是否将此布局添加到您的编辑工作区？", add: "添加",
+                    delete_title: "删除存档？", delete_desc: "您确定要永久删除此存档吗？", delete_confirm: "删除",
+                    community_title: "🌍 社区战术板", publish_btn: "+ 发布我当前的存档", publish_admin: "🔄 重新发布所选布局",
+                    admin_warning: "⚠️ 请选择下方的一个布局进行替换或重新发布！"
+                },
+                toasts: {
+                    max_tabs: "已达到最大存档数量", write_something: "请先输入一些内容", fb_success: "反馈发送成功！", fb_error: "发送网络钩子时出错",
+                    tab_deleted: "标签页已删除", conn_error: "连接错误。", no_layouts: "暂无发布内容",
+                    layout_selected_admin: "已选择社区布局进行重写！", own_like_error: "您不能给自己的作品点赞", already_liked_error: "您已经点赞过此布局！",
+                    admin_likes_prompt: "设置精确的点赞数：", admin_del_confirm: "确认从 Supabase 中永久删除此布局吗？",
+                    admin_del_success: "成功从 Supabase 删除布局", admin_del_error: "从 Supabase 删除时出错",
+                    admin_author_prompt: "修改此布局的作者名称：", admin_author_success: "作者名称已修改！", admin_author_error: "修改名称时出错",
+                    admin_edit_mode: "编辑模式已激活。重新发布将更新社区中的此布局。", publish_cooldown: "两次发布之间请等待1分钟。",
+                    publish_prompt_user: "输入您的用户名以发布：", publish_admin_success: "社区布局成功替换/重新发布！",
+                    publish_success: "已成功发布到社区！", publish_error: "发布时出错。", load_success: "布局加载成功！", load_error: "加载失败",
+                    screenshot_processing: "⏳ 正在处理...", screenshot_success: "✅ 图像已复制到剪贴板！", screenshot_error: "截取错误",
+                    admin_granted: "已获得管理员权限", admin_denied: "拒绝访问", admin_code_prompt: "管理员代码:"
+                },
+                by_author: "作者: "
+            },
+            ru: {
+                title: "Подсказки:", l1: "• 🖱️ <b>Перетаскивание:</b> Удерживайте элементы/концы.", l2: "• 🔀 <b>Изгиб:</b> ПРАВЫЙ КЛИК на стрелку!", l3: "• 🗑️ <b>Удаление:</b> Двойной клик по элементу.",
+                groups: ["Игроки (Макс 8)", "Объекты", "Линии", "Тактические символы"],
+                btns: ["Добавить Красного", "Добавить Синего", "⚽ Добавить Мяч", "↗️ Траектория Движения", "🚀 Траектория Удара", "💀 Опасность", "🧊 Заморозка", "⚠️ Предупреждение"],
+                top: ["+ НОВЫЙ СЕЙВ", "💬 Фидбэк", "🌍 Сообщество", "📸 Сделать Скриншот", "онлайн"],
+                player_def: "Игрок", save_prefix: "СЕЙВ",
+                modals: {
+                    feedback_title: "Отправить Фидбэк", feedback_placeholder: "Опишите баг или предложите идею...", cancel: "Отмена", send: "Отправить",
+                    layout_title: "Действие с макетом", layout_desc: "Хотите добавить этот макет на вашу рабочую область?", add: "Добавить",
+                    delete_title: "Удалить Сейв?", delete_desc: "Вы действительно хотите навсегда удалить этот сейв?", delete_confirm: "Удалить",
+                    community_title: "🌍 Макеты Сообщества", publish_btn: "+ Опубликовать Текущий Сейв", publish_admin: "🔄 Переопубликовать Выбранный Макет",
+                    admin_warning: "⚠️ Выберите макет ниже для замены/перепубликации!"
+                },
+                toasts: {
+                    max_tabs: "Достигнут лимит сейвов", write_something: "Сначала напишите что-нибудь", fb_success: "Фидбэк успешно отправлен!", fb_error: "Ошибка отправки вебхука",
+                    tab_deleted: "Вкладка удалена", conn_error: "Ошибка соединения.", no_layouts: "Публикаций пока нет",
+                    layout_selected_admin: "Макет сообщества выбран для перезаписи!", own_like_error: "Вы не можете лайкать свою работу", already_liked_error: "Вы уже лайкнули этот макет!",
+                    admin_likes_prompt: "Установить точное количество лайков:", admin_del_confirm: "Подтвердить ПЕРМАНЕНТНОЕ УДАЛЕНИЕ этого макета из Supabase?",
+                    admin_del_success: "Макет успешно удален из Supabase", admin_del_error: "Ошибка удаления из Supabase",
+                    admin_author_prompt: "Изменить имя автора для этого макета:", admin_author_success: "Имя автора изменено!", admin_author_error: "Ошибка при изменении имени",
+                    admin_edit_mode: "Активен режим редактирования. Перепубликация обновит этот макет в сообществе.", publish_cooldown: "Подождите 1 минуту между публикациями.",
+                    publish_prompt_user: "Введите ваше имя пользователя для публикации:", publish_admin_success: "Макет сообщества успешно заменен/переопубликован!",
+                    publish_success: "Опубликовано в Сообществе!", publish_error: "Ошибка при публикации.", load_success: "Макет загружен!", load_error: "Ошибка загрузки",
+                    screenshot_processing: "⏳ Обработка...", screenshot_success: "✅ Изображение скопировано в буфер обмена!", screenshot_error: "Ошибка захвата",
+                    admin_granted: "Доступ в режим администратора предоставлен", admin_denied: "Доступ запрещен", admin_code_prompt: "Административный код:"
+                },
+                by_author: "Автор: "
             }
         };
 
         function changeLanguage() {
             const lang = document.getElementById('lang-select').value;
             const d = dict[lang];
+            
+            // Sidebar e Dicas
             document.getElementById('dicas-title').innerHTML = d.title;
             document.getElementById('dicas-l1').innerHTML = d.l1;
             document.getElementById('dicas-l2').innerHTML = d.l2;
@@ -378,17 +617,63 @@
             document.getElementById('btn-sym-freeze').innerText = d.btns[6];
             document.getElementById('btn-sym-alert').innerText = d.btns[7];
 
+            // Barra Superior
             document.getElementById('add-tab-btn').innerText = d.top[0];
             document.getElementById('feedback-btn').innerText = d.top[1];
             document.getElementById('community-btn').innerText = d.top[2];
             document.getElementById('screenshot-btn').innerText = d.top[3];
             document.getElementById('lbl-online').innerText = d.top[4];
 
+            // Modals estáticos
+            document.getElementById('modal-title-feedback').innerText = d.modals.feedback_title;
+            document.getElementById('feedback-text').placeholder = d.modals.feedback_placeholder;
+            document.getElementById('btn-cancel-feedback').innerText = d.modals.cancel;
+            document.getElementById('btn-send-feedback').innerText = d.modals.send;
+
+            document.getElementById('modal-title-layout').innerText = d.modals.layout_title;
+            document.getElementById('modal-desc-layout').innerText = d.modals.layout_desc;
+            document.getElementById('btn-cancel-layout').innerText = d.modals.cancel;
+            document.getElementById('btn-confirm-layout').innerText = d.modals.add;
+
+            document.getElementById('modal-title-delete').innerText = d.modals.delete_title;
+            document.getElementById('modal-desc-delete').innerText = d.modals.delete_desc;
+            document.getElementById('btn-cancel-delete').innerText = d.modals.cancel;
+            document.getElementById('confirm-delete-btn').innerText = d.modals.delete_confirm;
+
+            document.getElementById('modal-title-community').innerText = d.modals.community_title;
+            document.getElementById('admin-select-warning').innerText = d.modals.admin_warning;
+
+            if(isAdmin) {
+                document.getElementById('btn-publish').innerText = d.modals.publish_admin;
+            } else {
+                document.getElementById('btn-publish').innerText = d.modals.publish_btn;
+            }
+
+            // Atualiza os nomes padrões dos jogadores criados
             document.querySelectorAll('.player-name').forEach(span => {
-                if (span.innerText === "Jogador" || span.innerText === "Player") {
+                if (["Jogador", "Player", "Jugador", "Joueur", "Giocatore", "球员", "Игрок"].includes(span.innerText)) {
                     span.innerText = d.player_def;
                 }
             });
+
+            // Atualiza os nomes das Abas existentes
+            document.querySelectorAll('.tab').forEach(tabBtn => {
+                const idNum = tabBtn.id.replace('btn-save-', '');
+                if(tabBtn.firstChild) {
+                    tabBtn.firstChild.textContent = `${d.save_prefix} ${idNum} `;
+                }
+            });
+
+            // Recarrega a comunidade se estiver aberta para traduzir textos dinâmicos dos cards
+            if(document.getElementById('community-modal').classList.contains('active')) {
+                loadCommunityLayouts();
+            }
+        }
+
+        // Helper para buscar mensagens de toast traduzidas
+        function getMsg(key) {
+            const lang = document.getElementById('lang-select').value;
+            return dict[lang].toasts[key] || dict['pt'].toasts[key];
         }
 
         // ==========================================
@@ -401,12 +686,12 @@
                 clearTimeout(adminTimer);
                 if(adminClicks === 10) {
                     adminClicks = 0;
-                    const pass = prompt("Código Administrativo:");
+                    const pass = prompt(getMsg('admin_code_prompt'));
                     if(pass === "2203") {
                         isAdmin = true;
-                        showToast("Modo de Administração Concedido", "success");
-                        if(document.getElementById('community-modal').classList.contains('active')) loadCommunityLayouts();
-                    } else if (pass) showToast("Acesso Negado", "error");
+                        showToast(getMsg('admin_granted'), "success");
+                        changeLanguage(); // atualiza strings de admin
+                    } else if (pass) showToast(getMsg('admin_denied'), "error");
                 } else { adminTimer = setTimeout(() => adminClicks = 0, 500); }
             }
         });
@@ -419,7 +704,7 @@
         
         async function sendFeedbackWebhook() {
             const text = document.getElementById('feedback-text').value.trim();
-            if(!text) { showToast("Escreva algo primeiro", "warn"); return; }
+            if(!text) { showToast(getMsg('write_something'), "warn"); return; }
             
             const hookUrl = 'https://discord.com/api/webhooks/1418572542607622154/Nf1wIq7nM41lSHiziL2TIKDbvoxlbFRg_62xGxYjnq-ngoRHTmRGN5eXp7Y288xKAsMi';
             showLoading();
@@ -428,10 +713,10 @@
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content: `**Novo Feedback de [${localStorage.getItem('eggball_username') || 'Anônimo'}]**\n> ${text}` })
                 });
-                if(res.ok || res.status === 204) { showToast("Feedback enviado com sucesso!", "success"); closeFeedbackModal(); }
+                if(res.ok || res.status === 204) { showToast(getMsg('fb_success'), "success"); closeFeedbackModal(); }
                 else throw new Error('Falha no POST');
             } catch(e) {
-                showToast("Erro ao enviar webhook", "error");
+                showToast(getMsg('fb_error'), "error");
             } finally { hideLoading(); }
         }
 
@@ -474,11 +759,15 @@
 
         function addTab(initialData = null) {
             const existingTabs = document.querySelectorAll('.tab').length;
-            if (existingTabs >= 10) { showToast("Máximo de saves atingido", "warn"); return null; }
+            if (existingTabs >= 10) { showToast(getMsg('max_tabs'), "warn"); return null; }
             tabCount++; const tabId = `save-${tabCount}`;
             const tabBtn = document.createElement('div'); 
             tabBtn.className = 'tab'; tabBtn.id = `btn-${tabId}`; 
-            tabBtn.innerHTML = `SAVE ${tabCount} <div class="tab-delete-zone"></div>`; 
+            
+            const lang = document.getElementById('lang-select').value;
+            const prefix = dict[lang].save_prefix;
+            
+            tabBtn.innerHTML = `${prefix} ${tabCount} <div class="tab-delete-zone"></div>`; 
             
             tabBtn.onclick = (e) => {
                 if (e.target.classList.contains('tab-delete-zone')) { promptDeleteTab(tabId); return; }
@@ -512,27 +801,28 @@
                 const remainingTabs = document.querySelectorAll('.tab');
                 if (remainingTabs.length > 0) switchTab(remainingTabs[0].id.replace('btn-', '')); else activeTabId = null;
             }
-            closeDeleteModal(); showToast("Aba apagada", "success");
+            closeDeleteModal(); showToast(getMsg('tab_deleted'), "success");
         }
 
         function getActiveDragLayer() { return document.querySelector(`#layer-${activeTabId} .drag-layer`); }
         function getActiveDrawLayer() { return document.querySelector(`#layer-${activeTabId} .drawing-layer`); }
 
         // ==========================================
-        // COMUNIDADE: INTERFACE MELHORADA
+        // COMUNIDADE: INTERFACE TRADUZIDA
         // ==========================================
         let loadedLayoutsCache = []; 
         let pendingLayoutHTML = "";
         let selectedCommunityLayoutIdForOverride = null;
 
         async function openCommunityModal() {
+            const lang = document.getElementById('lang-select').value;
             document.getElementById('community-modal').classList.add('active');
             selectedCommunityLayoutIdForOverride = null;
             if(isAdmin) {
-                document.getElementById('btn-publish').innerText = "🔄 Republicar Layout Selecionado";
+                document.getElementById('btn-publish').innerText = dict[lang].modals.publish_admin;
                 document.getElementById('admin-select-warning').style.display = 'inline';
             } else {
-                document.getElementById('btn-publish').innerText = "+ Publicar Meu Save Atual";
+                document.getElementById('btn-publish').innerText = dict[lang].modals.publish_btn;
                 document.getElementById('admin-select-warning').style.display = 'none';
             }
             loadCommunityLayouts();
@@ -541,11 +831,12 @@
 
         async function loadCommunityLayouts() {
             const grid = document.getElementById('community-grid');
+            const lang = document.getElementById('lang-select').value;
             grid.innerHTML = '<div class="loader" style="margin: 40px auto; border-color: rgba(16,185,129,0.2); border-top-color: var(--accent);"></div>';
             
             const { data, error } = await supabaseClient.from('community_layouts').select('*').order('likes', { ascending: false });
-            if (error || !data) { grid.innerHTML = `<div class="empty-message">Erro de conexão.</div>`; return; }
-            if (data.length === 0) { grid.innerHTML = `<div class="empty-message">Ainda não há nenhuma publicação</div>`; return; }
+            if (error || !data) { grid.innerHTML = `<div class="empty-message">${getMsg('conn_error')}</div>`; return; }
+            if (data.length === 0) { grid.innerHTML = `<div class="empty-message">${getMsg('no_layouts')}</div>`; return; }
 
             loadedLayoutsCache = data;
             grid.innerHTML = '';
@@ -565,7 +856,7 @@
                         selectedCommunityLayoutIdForOverride = layout.id;
                         document.querySelectorAll('.layout-card').forEach(c => c.classList.remove('selected-for-override'));
                         card.classList.add('selected-for-override');
-                        showToast("Layout da comunidade selecionado para reescrita!", "warn");
+                        showToast(getMsg('layout_selected_admin'), "warn");
                     } else {
                         promptAddLayout(index);
                     }
@@ -583,7 +874,7 @@
                 card.innerHTML = `
                     <img src="${layout.thumbnail}" class="layout-thumb" alt="Thumbnail">
                     <div class="layout-info">
-                        <div class="layout-title">Por: ${layout.username}</div>
+                        <div class="layout-title">${dict[lang].by_author}${layout.username}</div>
                         <div class="layout-actions">
                             <button class="like-btn" onclick="likeLayout('${layout.id}', '${layout.author_id}')">
                                 ❤️ <span id="like-count-${layout.id}">${layout.likes}</span>
@@ -610,30 +901,43 @@
         }
 
         async function likeLayout(id, authorId) {
-            if (!isAdmin && authorId === deviceUUID) { showToast("Você não pode curtir sua obra", "error"); return; }
+            if (!isAdmin && authorId === deviceUUID) { showToast(getMsg('own_like_error'), "error"); return; }
+            
+            // Gerencia o histórico local de layouts curtidos para evitar likes infinitos
+            let likedLayouts = JSON.parse(localStorage.getItem('eggball_liked_layouts') || '[]');
+            if (!isAdmin && likedLayouts.includes(id)) {
+                showToast(getMsg('already_liked_error'), "warn");
+                return;
+            }
+
             const countSpan = document.getElementById(`like-count-${id}`);
             let likes = parseInt(countSpan.innerText) + 1;
             countSpan.innerText = likes;
+            
+            if (!isAdmin) {
+                likedLayouts.push(id);
+                localStorage.setItem('eggball_liked_layouts', JSON.stringify(likedLayouts));
+            }
+            
             await supabaseClient.from('community_layouts').update({ likes: likes }).eq('id', id);
         }
 
         async function adminSetLikes(id) {
-            let n = prompt("Definir exato de curtidas:");
+            let n = prompt(getMsg('admin_likes_prompt'));
             if(n !== null && !isNaN(n)) { await supabaseClient.from('community_layouts').update({likes: parseInt(n)}).eq('id', id); loadCommunityLayouts(); }
         }
         
         async function adminDeleteLayout(id) {
-            if(confirm("Confirmar EXCLUSÃO permanente deste layout do Supabase?")) {
+            if(confirm(getMsg('admin_del_confirm'))) {
                 showLoading();
                 try {
                     const { error } = await supabaseClient.from('community_layouts').delete().eq('id', id);
                     if (error) throw error;
-                    showToast("Layout excluído do Supabase com sucesso", "success");
+                    showToast(getMsg('admin_del_success'), "success");
                     if (selectedCommunityLayoutIdForOverride === id) selectedCommunityLayoutIdForOverride = null;
                     loadCommunityLayouts();
                 } catch(e) {
-                    showToast("Erro ao excluir do Supabase", "error");
-                    console.error(e);
+                    showToast(getMsg('admin_del_error'), "error");
                 } finally {
                     hideLoading();
                 }
@@ -642,17 +946,16 @@
         
         async function adminEditAuthor(index) {
             const layout = loadedLayoutsCache[index];
-            let newName = prompt("Modificar nome do autor deste layout:", layout.username);
+            let newName = prompt(getMsg('admin_author_prompt'), layout.username);
             if(newName !== null && newName.trim() !== "") {
                 showLoading();
                 try {
                     const { error } = await supabaseClient.from('community_layouts').update({ username: newName.trim() }).eq('id', layout.id);
                     if(error) throw error;
-                    showToast("Nome do autor modificado!", "success");
+                    showToast(getMsg('admin_author_success'), "success");
                     loadCommunityLayouts();
                 } catch(e) {
-                    showToast("Erro ao editar nome", "error");
-                    console.error(e);
+                    showToast(getMsg('admin_author_error'), "error");
                 } finally {
                     hideLoading();
                 }
@@ -664,7 +967,7 @@
             selectedCommunityLayoutIdForOverride = loadedLayoutsCache[index].id;
             closeCommunityModal();
             loadLayoutProcess(loadedLayoutsCache[index].layout_data, activeTabId || null);
-            showToast("Modo de Edição Ativo. Republicar atualizará este layout na comunidade.", "warn");
+            showToast(getMsg('admin_edit_mode'), "warn");
         }
 
         // ==========================================
@@ -675,16 +978,17 @@
         async function publishCurrentLayout() {
             if (!activeTabId) return;
             const now = Date.now();
-            if (!isAdmin && now - lastPublishTime < 60000) { showToast("Aguarde 1 min entre publicações.", "warn"); return; }
+            if (!isAdmin && now - lastPublishTime < 60000) { showToast(getMsg('publish_cooldown'), "warn"); return; }
 
+            const lang = document.getElementById('lang-select').value;
             if (isAdmin && !selectedCommunityLayoutIdForOverride) {
-                showToast("Por favor, selecione primeiro para qual layout da lista a nova publicação deve ir!", "error");
+                showToast(dict[lang].modals.admin_warning, "error");
                 return;
             }
 
             let username = localStorage.getItem('eggball_username');
             if (!username && !isAdmin) {
-                username = prompt("Insira seu nome de usuário para publicar:");
+                username = prompt(getMsg('publish_prompt_user'));
                 if (!username || username.trim() === '') return;
                 localStorage.setItem('eggball_username', username.trim());
             } else if (isAdmin) {
@@ -705,18 +1009,18 @@
                         layout_data: currentLayerHTML, thumbnail: thumbnailBase64
                     }).eq('id', selectedCommunityLayoutIdForOverride);
                     if (error) throw error;
-                    showToast("Layout da comunidade substituído/republicado com sucesso!", "success");
+                    showToast(getMsg('publish_admin_success'), "success");
                     selectedCommunityLayoutIdForOverride = null;
                 } else {
                     const { error } = await supabaseClient.from('community_layouts').insert([{
                         username: username, author_id: deviceUUID, layout_data: currentLayerHTML, thumbnail: thumbnailBase64, likes: 0
                     }]);
                     if (error) throw error;
-                    showToast("Publicado na Comunidade!", "success");
+                    showToast(getMsg('publish_success'), "success");
                 }
                 localStorage.setItem('eggball_last_pub', Date.now()); lastPublishTime = Date.now();
                 loadCommunityLayouts(); 
-            } catch (err) { console.error(err); showToast("Erro ao publicar.", "error"); } 
+            } catch (err) { showToast(getMsg('publish_error'), "error"); } 
             finally { hideLoading(); }
         }
 
@@ -726,8 +1030,8 @@
                 try {
                     if (targetTabId) { document.getElementById(`layer-${targetTabId}`).innerHTML = htmlData; switchTab(targetTabId); } 
                     else { const newId = addTab(htmlData); if (newId) switchTab(newId); }
-                    hideLoading(); showToast("Layout carregado!", "success"); reattachDragEvents();
-                } catch(e) { hideLoading(); showToast("Falha na carga", "error"); }
+                    hideLoading(); showToast(getMsg('load_success'), "success"); reattachDragEvents();
+                } catch(e) { hideLoading(); showToast(getMsg('load_error'), "error"); }
             }, 600);
         }
 
@@ -791,15 +1095,16 @@
 
         async function takeScreenshot() {
             const btn = document.getElementById('screenshot-btn');
-            btn.innerHTML = "⏳ Processando..."; btn.disabled = true; cancelDrawingMode();
+            const originalText = btn.innerHTML;
+            btn.innerHTML = getMsg('screenshot_processing'); btn.disabled = true; cancelDrawingMode();
             try {
                 const canvas = await html2canvas(document.getElementById('field'), { backgroundColor: null, scale: 2 });
                 canvas.toBlob(async (blob) => {
                     await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-                    showToast("✅ Imagem copiada para Área de Transferência!");
+                    showToast(getMsg('screenshot_success'));
                 });
-            } catch(e) { showToast("Erro na captura", "error"); } 
-            finally { btn.innerHTML = "📸 Capturar Imagem"; btn.disabled = false; }
+            } catch(e) { showToast(getMsg('screenshot_error'), "error"); } 
+            finally { btn.innerHTML = originalText; btn.disabled = false; }
         }
 
         // ==========================================
@@ -840,7 +1145,8 @@
         });
 
         field.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.player-label-container') || e.button !== 0 || e.target.id === 'field') return;
+            if (e.target.closest('.player-label-container') || e.button !== 0) return;
+            
             const r = field.getBoundingClientRect();
             const clickX = e.clientX - r.left, clickY = e.clientY - r.top;
             const hitbox = e.target.closest('.hitbox');
@@ -856,7 +1162,8 @@
                 else if (Math.hypot(clickX - x2, clickY - y2) < 25) lineEditMode = 'end';
                 else if (bx && Math.hypot(clickX - bx, clickY - by) < 25) lineEditMode = 'bounce';
                 else { lineEditMode = 'move'; dragOffset = { x: clickX, y: clickY }; }
-                e.preventDefault(); return;
+                e.preventDefault(); 
+                return;
             }
 
             if (drawingMode) {
@@ -867,17 +1174,28 @@
                 tempGroup.dataset.x2 = clickX; tempGroup.dataset.y2 = clickY;
 
                 const hit = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                hit.setAttribute("class", "hitbox"); hit.setAttribute("stroke", "transparent"); hit.setAttribute("stroke-width", "25"); hit.setAttribute("fill", "none");
+                hit.setAttribute("class", "hitbox"); 
+                hit.setAttribute("stroke", "transparent"); 
+                hit.setAttribute("stroke-width", "25"); 
+                hit.setAttribute("fill", "none");
 
                 const vis = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                vis.setAttribute("class", "anim-line visible-line"); vis.setAttribute("stroke", drawingMode.color); vis.setAttribute("stroke-width", "4"); vis.setAttribute("fill", "none");
+                vis.setAttribute("class", "anim-line visible-line"); 
+                vis.setAttribute("stroke", drawingMode.color); 
+                vis.setAttribute("stroke-width", "4"); 
+                vis.setAttribute("fill", "none");
 
-                tempGroup.appendChild(hit); tempGroup.appendChild(vis);
-                updatePath(tempGroup); getActiveDrawLayer().appendChild(tempGroup); e.preventDefault();
+                tempGroup.appendChild(hit); 
+                tempGroup.appendChild(vis);
+                updatePath(tempGroup); 
+                getActiveDrawLayer().appendChild(tempGroup); 
+                e.preventDefault();
             } else {
                 const dragItem = e.target.closest('.drag-item');
                 if (dragItem) {
-                    isDragging = true; currentDrag = dragItem; currentDrag.style.zIndex = 1000;
+                    isDragging = true; 
+                    currentDrag = dragItem; 
+                    currentDrag.style.zIndex = 1000;
                     const container = currentDrag.querySelector('.player-label-container');
                     if (container) container.classList.remove('translucent');
                 }
