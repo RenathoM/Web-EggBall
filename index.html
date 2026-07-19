@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <meta property="og:title" content="EggBall Strats - Táticas e Estratégias">
-    <meta property="og:description" content="Crie, desenhe e compartilhe suas táticas e movimentações no campo virtual!">
-    <meta property="og:image" content="https://i.imgur.com/8Q9Z5Ym.png">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-
     <title>EggBall Strat</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥚</text></svg>">
     
@@ -29,40 +23,39 @@
         }
 
         body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color); color: var(--text-color);
             display: flex; height: 100vh; overflow: hidden;
         }
 
         body.drawing-mode .drag-item { pointer-events: none !important; }
 
-        /* Sidebar */
+        /* Sidebar & Tools */
         .sidebar {
             width: 320px; background-color: var(--panel-bg); padding: 20px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.5); display: flex; flex-direction: column;
             gap: 15px; overflow-y: auto; z-index: 20;
         }
-
         .sidebar h1 {
-            font-size: 1.5rem; text-align: center; margin-bottom: 10px;
-            color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 10px;
+            font-size: 1.5rem; text-align: center; margin-bottom: 10px; color: var(--accent);
+            border-bottom: 2px solid var(--accent); padding-bottom: 10px;
         }
-
         .tool-group { display: flex; flex-direction: column; gap: 10px; }
         .tool-group h3 { font-size: 0.95rem; margin: 10px 0 5px 0; color: #aaa; text-transform: uppercase; }
 
         button.tool-btn {
             background-color: #3f3f4e; color: white; border: 2px solid transparent; padding: 10px;
             border-radius: 5px; cursor: pointer; transition: all 0.2s; font-weight: bold;
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; gap: 10px; justify-content: center;
         }
-
-        button.tool-btn:hover { background-color: #4f4f62; }
+        button.tool-btn:hover { background-color: #4f4f62; transform: translateY(-2px); }
+        
         .btn-blue { border-left: 5px solid var(--blue-team); }
         .btn-red { border-left: 5px solid var(--red-team); }
         .btn-yellow { border-left: 5px solid #fbbf24; }
         .btn-white { border-left: 5px solid #ffffff; }
+        .btn-purple { border-left: 5px solid #a855f7; background-color: #2e1f42; }
+        .btn-danger { background-color: #7f1d1d !important; border-color: #ef4444 !important; }
         .active-draw-btn { background-color: var(--accent) !important; border-color: #fff !important; color: #000 !important; }
 
         .instructions {
@@ -70,83 +63,107 @@
             padding: 15px; border-radius: 5px; line-height: 1.5;
         }
 
-        /* Área Principal */
+        /* Top Section & Tabs */
         .content-area { flex: 1; display: flex; flex-direction: column; background-color: #121215; position: relative; }
-
-        /* Wrapper Integrado da Aba Superior (Saves + Ações + Online) */
         .top-section-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            background-color: #1a1a20;
-            border-bottom: 2px solid var(--panel-bg);
-            padding-right: 20px;
+            display: flex; justify-content: space-between; align-items: flex-end;
+            background-color: #1a1a20; border-bottom: 2px solid var(--panel-bg); padding-right: 20px;
         }
-
-        /* Abas Isoladas para não quebrar o JS */
         .tabs-bar {
-            display: flex; align-items: center; padding: 10px 0 0 20px;
-            gap: 5px; overflow-x: auto;
+            display: flex; align-items: center; padding: 10px 0 0 20px; gap: 5px; overflow-x: auto; flex: 1; min-height: 40px;
         }
-
         .tab {
-            background-color: #3f3f4e; color: #888; padding: 10px 20px; border-radius: 8px 8px 0 0;
-            cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; border: 2px solid transparent; border-bottom: none; user-select: none;
+            position: relative; background-color: #3f3f4e; color: #888; padding: 10px 30px 10px 20px; border-radius: 8px 8px 0 0;
+            cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: all 0.2s; border: 2px solid transparent; border-bottom: none; user-select: none; overflow: hidden;
         }
         .tab:hover:not(.active) { background-color: #4f4f62; color: #ddd; }
         .tab.active { background-color: var(--accent); color: #000; box-shadow: 0 -2px 10px rgba(16, 185, 129, 0.2); }
-        .add-tab-btn { background: transparent; color: var(--accent); border: 2px dashed var(--accent); padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 5px; margin-left: 10px; transition: all 0.2s; }
-        .add-tab-btn:hover { background: rgba(16, 185, 129, 0.1); }
-
-        /* Controles do Cabeçalho alinhados à direita */
-        .header-actions { 
-            display: flex; gap: 10px; align-items: center; padding-bottom: 10px; 
-        }
         
-        .header-actions select, .header-actions button {
-            background-color: #3f3f4e; color: white; border: 1px solid #555;
-            padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold;
-            outline: none; transition: 0.2s;
+        .tab-delete-zone {
+            position: absolute; right: 0; top: 0; width: 15%; height: 100%; background-color: #ef4444; 
+            opacity: 0; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center;
         }
-        .header-actions select:hover, .header-actions button:hover { background-color: #4f4f62; }
+        .tab-delete-zone::after { content: '×'; color: white; font-weight: bold; font-size: 16px; }
+        .tab:hover .tab-delete-zone { opacity: 1; }
 
+        .add-tab-btn { background: transparent; color: var(--accent); border: 2px dashed var(--accent); padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 5px; margin-left: 10px; transition: all 0.2s; }
+        .add-tab-btn:hover { background: rgba(16, 185, 129, 0.2); }
+
+        .header-actions { display: flex; gap: 10px; align-items: center; padding-bottom: 10px; }
+        .header-actions select, .header-actions button {
+            background-color: #3f3f4e; color: white; border: 1px solid #555; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; outline: none; transition: 0.2s;
+        }
+        .header-actions button:hover { background-color: #4f4f62; }
+        
+        #feedback-btn { margin-right: 5px; background-color: var(--blue-team); border: none; }
         .online-status {
             display: flex; align-items: center; gap: 6px; font-weight: bold; color: #ccc;
             background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 5px; border: 1px solid #333;
         }
         .online-dot { font-size: 10px; animation: pulse 2s infinite; }
-        
-        @keyframes pulse {
-            0% { opacity: 1; text-shadow: 0 0 5px #10b981; }
-            50% { opacity: 0.4; text-shadow: none; }
-            100% { opacity: 1; text-shadow: 0 0 5px #10b981; }
-        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        #feedback-btn {
-            position: absolute; top: 62px; right: 20px; background-color: var(--blue-team); color: #fff;
-            border: none; padding: 8px 16px; border-radius: 5px; font-weight: bold; cursor: pointer; z-index: 100;
-        }
-
-        /* Modal Feedback */
+        /* Modals & Popups */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8);
-            display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(3px);
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85);
+            display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(5px);
         }
         .modal-overlay.active { display: flex; }
-        .modal-content { background-color: var(--panel-bg); padding: 30px; border-radius: 10px; width: 450px; border: 1px solid #4f4f62; }
-        .modal-content h2 { color: var(--text-color); border-bottom: 2px solid var(--blue-team); padding-bottom: 10px; }
-        .modal-content textarea { width: 100%; background-color: #1e1e24; color: white; border: 1px solid #555; border-radius: 5px; padding: 12px; margin-bottom: 20px; resize: vertical; box-sizing: border-box; }
-        .modal-buttons { display: flex; justify-content: flex-end; gap: 12px; }
+        .modal-content { background-color: var(--panel-bg); padding: 30px; border-radius: 10px; width: 450px; border: 1px solid #4f4f62; max-height: 90vh; display: flex; flex-direction: column; position: relative;}
+        .modal-content.large { width: 80%; max-width: 900px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-bottom: 20px; }
+        .modal-header h2 { margin: 0; color: var(--text-color); }
+        .close-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        
+        textarea.feedback-input { width: 100%; height: 120px; background: #1a1a20; border: 1px solid #555; color: white; padding: 10px; border-radius: 5px; margin-bottom: 15px; resize: none; font-family: inherit;}
 
-        /* Área do Campo */
+        #toast-popup {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 8px; color: white; font-weight: bold;
+            z-index: 3000; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;
+        }
+        .toast-success { background-color: #10b981; }
+        .toast-error { background-color: #ef4444; }
+        .toast-warn { background-color: #f59e0b; }
+
+        .loader {
+            border: 5px solid rgba(255,255,255,0.2); border-top: 5px solid white;
+            border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Community Area */
+        .community-container { flex: 1; overflow-y: auto; padding: 10px; }
+        .community-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .layout-card { 
+            background: #1e1e24; border-radius: 8px; border: 1px solid #444; overflow: hidden; 
+            transition: all 0.2s; position: relative; cursor: pointer;
+        }
+        .layout-card:hover { transform: translateY(-5px); border-color: #a855f7; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .layout-card.selected-for-override { border: 3px solid var(--accent); background: rgba(16, 185, 129, 0.1); }
+        .layout-thumb { width: 100%; height: 140px; background: #000; object-fit: cover; border-bottom: 1px solid #333; }
+        .layout-info { padding: 12px; }
+        .layout-title { font-weight: bold; margin-bottom: 5px; color: #fff; font-size: 14px; }
+        
+        .layout-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 5px;}
+        .like-btn { background: transparent; border: 1px solid transparent; color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: bold; padding: 5px 8px; border-radius: 4px; transition: 0.2s;}
+        .like-btn:hover { background: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
+        
+        /* Admin Tools UI */
+        .admin-controls { display: flex; width: 100%; gap: 5px; margin-top: 5px; padding-top: 5px; border-top: 1px solid #333; }
+        .admin-btn { flex: 1; padding: 4px; font-size: 11px; background: #3f3f4e; color: white; border: none; border-radius: 3px; cursor: pointer;}
+        .admin-btn:hover { background: #ef4444; }
+        .admin-btn.edit:hover { background: #fbbf24; color: black; }
+
+        .empty-message { text-align: center; color: #888; font-style: italic; padding: 40px; grid-column: 1 / -1; }
+
+        /* Field & Drawing */
         .main-area { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: auto; }
         .field-wrapper { position: relative; display: flex; align-items: center; }
         .field { position: relative; width: 800px; height: 450px; background-color: var(--field-green); border: 3px solid var(--line-color); box-sizing: border-box; }
-
-        .center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; background-color: var(--line-color); transform: translateX(-50%); }
-        .center-circle { position: absolute; left: 50%; top: 50%; width: 120px; height: 120px; border: 3px solid var(--line-color); border-radius: 50%; transform: translate(-50%, -50%); }
+        .center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; background-color: var(--line-color); transform: translateX(-50%); pointer-events: none;}
+        .center-circle { position: absolute; left: 50%; top: 50%; width: 120px; height: 120px; border: 3px solid var(--line-color); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none;}
         
-        .goal { position: absolute; top: 50%; width: 60px; height: 160px; transform: translateY(-50%); box-sizing: border-box; }
+        .goal { position: absolute; top: 50%; width: 60px; height: 160px; transform: translateY(-50%); box-sizing: border-box; pointer-events: none;}
         .goal-left { right: 100%; border: 3px solid var(--red-team); border-right: none; background-color: rgba(239, 68, 68, 0.4); }
         .goal-left::before, .goal-left::after { content: ''; position: absolute; right: -4px; width: 10px; height: 10px; background-color: white; border-radius: 50%; transform: translateX(50%); }
         .goal-left::before { top: -5px; } .goal-left::after { bottom: -5px; }
@@ -155,12 +172,12 @@
         .goal-right::before, .goal-right::after { content: ''; position: absolute; left: -4px; width: 10px; height: 10px; background-color: white; border-radius: 50%; transform: translateX(-50%); }
         .goal-right::before { top: -5px; } .goal-right::after { bottom: -5px; }
 
-        #save-layers-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #save-layers-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;}
         .save-layer { position: absolute; width: 100%; height: 100%; display: none; }
         .save-layer.active { display: block; }
         
         .drawing-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
-        .drawn-path-group { cursor: move; }
+        .drawn-path-group { cursor: move; pointer-events: auto; }
         .hitbox { pointer-events: stroke; cursor: move; }
         .visible-line { pointer-events: none; }
         @keyframes march { to { stroke-dashoffset: -20; } }
@@ -170,20 +187,15 @@
         .drag-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
         .drag-item { position: absolute; cursor: grab; pointer-events: auto; user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translate(-50%, -50%); filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.6)); z-index: 10; margin: 0; padding: 0; }
         .drag-item:active { cursor: grabbing; }
-
         .player-circle { width: 38px; height: 38px; border-radius: 50%; border: 3px solid white; box-sizing: border-box; }
         .player-blue .player-circle { background-color: var(--blue-team); }
         .player-red .player-circle { background-color: var(--red-team); }
-
-        .player-label-container { display: flex; align-items: center; gap: 4px; background: transparent; padding: 0; margin-top: 5px; transition: opacity 0.3s ease; opacity: 1; }
+        .player-label-container { display: flex; align-items: center; gap: 4px; background: transparent; padding: 0; margin-top: 5px; opacity: 1; transition: opacity 0.3s; }
         .player-label-container.translucent { opacity: 0.4; }
         .player-label-container:hover { opacity: 1; }
-
         .player-name { font-size: 13px; font-weight: bold; color: white; white-space: nowrap; outline: none; min-width: 20px; text-shadow: -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8), 1px 1px 0 rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.9); }
-        .player-name[contenteditable="true"] { background-color: rgba(0,0,0,0.4); padding: 0 4px; border-radius: 2px; cursor: text; }
-        .edit-icon { font-size: 12px; cursor: pointer; opacity: 0.7; filter: drop-shadow(0px 1px 2px black); }
-        .edit-icon:hover { opacity: 1; }
-
+        .player-name[contenteditable="true"] { background-color: rgba(0,0,0,0.4); padding: 0 4px; border-radius: 2px; }
+        .edit-icon { font-size: 12px; cursor: pointer; opacity: 0.7; }
         .ball { width: 26px; height: 26px; background-color: white; border-radius: 50%; border: 2px solid #000; box-shadow: inset -3px -3px 5px rgba(0,0,0,0.3); }
         .icon-item { font-size: 26px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
         .hide-on-print { opacity: 1 !important; }
@@ -192,74 +204,53 @@
 <body>
 
     <div class="sidebar">
-        <h1 data-i18n="title">EggBall Strats</h1>
-        
+        <h1>EggBall Strats</h1>
         <div class="tool-group">
-            <h3 data-i18n="players_group">Jogadores (Max 8)</h3>
-            <button class="tool-btn btn-red" onclick="addElement('player-red')" data-i18n="add_red">Adicionar Vermelho</button>
-            <button class="tool-btn btn-blue" onclick="addElement('player-blue')" data-i18n="add_blue">Adicionar Azul</button>
+            <h3 id="group-players">Jogadores (Max 8)</h3>
+            <button class="tool-btn btn-red" onclick="addElement('player-red')" id="btn-add-red">Adicionar Vermelho</button>
+            <button class="tool-btn btn-blue" onclick="addElement('player-blue')" id="btn-add-blue">Adicionar Azul</button>
         </div>
-
         <div class="tool-group">
-            <h3 data-i18n="objects_group">Objetos</h3>
-            <button class="tool-btn btn-white" onclick="addElement('ball')">⚽ <span data-i18n="add_ball">Adicionar Bola</span></button>
+            <h3 id="group-objects">Objetos</h3>
+            <button class="tool-btn btn-white" onclick="addElement('ball')" id="btn-add-ball">⚽ Adicionar Bola</button>
         </div>
-
         <div class="tool-group">
-            <h3 data-i18n="lines_group">Linhas (Segure e Arraste)</h3>
-            <button id="btn-draw-move" class="tool-btn btn-white" onclick="enableDrawingMode('move', '#ffffff', 'btn-draw-move')">
-                ↗️ <span data-i18n="draw_move">Traçar Movimento</span>
-            </button>
-            <button id="btn-draw-kick" class="tool-btn btn-yellow" onclick="enableDrawingMode('kick', '#fbbf24', 'btn-draw-kick')">
-                🚀 <span data-i18n="draw_kick">Traçar Chute</span>
-            </button>
+            <h3 id="group-lines">Linhas</h3>
+            <button id="btn-draw-move" class="tool-btn btn-white" onclick="enableDrawingMode('move', '#ffffff', 'btn-draw-move')">↗️ Traçar Movimento</button>
+            <button id="btn-draw-kick" class="tool-btn btn-yellow" onclick="enableDrawingMode('kick', '#fbbf24', 'btn-draw-kick')">🚀 Traçar Chute</button>
         </div>
-
         <div class="tool-group">
-            <h3 data-i18n="symbols_group">Símbolos Táticos</h3>
-            <button class="tool-btn" onclick="addElement('danger')">💀 <span data-i18n="sym_danger">Perigo</span></button>
-            <button class="tool-btn" onclick="addElement('freeze')">🧊 <span data-i18n="sym_freeze">Congelar</span></button>
-            <button class="tool-btn" onclick="addElement('alert')">⚠️ <span data-i18n="sym_alert">Alerta</span></button>
+            <h3 id="group-tactics">Símbolos Táticos</h3>
+            <button class="tool-btn" onclick="addElement('danger')" id="btn-sym-danger">💀 Perigo</button>
+            <button class="tool-btn" onclick="addElement('freeze')" id="btn-sym-freeze">🧊 Congelar</button>
+            <button class="tool-btn" onclick="addElement('alert')" id="btn-sym-alert">⚠️ Alerta</button>
         </div>
-
-        <div class="instructions" id="instructions-text">
-            <strong data-i18n="tips_title">Dicas de Uso:</strong><br>
-            • 🖱️ <b>Arrastar:</b> Segure nos itens/pontas.<br>
-            • 🚫 <b>Lock:</b> Ative uma seta para desenhar com segurança sem puxar jogadores.<br>
-            • 🔀 <b>Física/Bounce:</b> Clique DIREITO em uma seta existente para dobrá-la!<br>
-            • 🗑️ <b>Excluir:</b> Duplo clique no item ou seta.<br>
+        <div class="instructions">
+            <strong id="dicas-title">Dicas:</strong><br>
+            <span id="dicas-l1">• 🖱️ <b>Arrastar:</b> Segure nos itens/pontas.</span><br>
+            <span id="dicas-l2">• 🔀 <b>Curvar:</b> Clique DIREITO em uma seta!</span><br>
+            <span id="dicas-l3">• 🗑️ <b>Excluir:</b> Duplo clique no item.</span><br>
         </div>
     </div>
 
     <div class="content-area">
-        <!-- Wrapper unificado: Abas à esquerda e Ações à direita na MESMA linha -->
         <div class="top-section-wrapper hide-on-print">
-            
-            <!-- Abas (Isoladas para o Javascript continuar funcionando) -->
             <div class="tabs-bar" id="tabs-bar">
-                <button class="add-tab-btn" onclick="addTab()" data-i18n="new_save">+ NOVO SAVE</button>
+                <button class="add-tab-btn" id="add-tab-btn" onclick="addTab()">+ NOVO SAVE</button>
             </div>
-            
-            <!-- Controles (Idioma, Print e Online do Supabase) -->
             <div class="header-actions">
-                <select id="language-select" onchange="changeLanguage(this.value)">
-                    <option value="pt-BR">🇧🇷 Português (BR)</option>
-                    <option value="pt-PT">🇵🇹 Português (PT)</option>
-                    <option value="en">🇬🇧 English</option>
-                    <option value="es">🇪🇸 Español</option>
+                <select id="lang-select" onchange="changeLanguage()">
+                    <option value="pt">PT-BR</option>
+                    <option value="en">EN-US</option>
                 </select>
-                <button id="screenshot-btn" onclick="takeScreenshot()">📸 <span data-i18n="screenshot">Capturar Imagem</span></button>
-                
+                <button id="feedback-btn" onclick="openFeedbackModal()">💬 Feedback</button>
+                <button id="community-btn" onclick="openCommunityModal()">🌍 Comunidade</button>
+                <button id="screenshot-btn" onclick="takeScreenshot()">📸 Capturar Imagem</button>
                 <div class="online-status">
-                    <span class="online-dot">🟢</span> 
-                    <span data-i18n="online_text">online</span> 
-                    <span id="online-counter">...</span>
+                    <span class="online-dot">🟢</span> <span id="lbl-online">online</span> <span id="online-counter">...</span>
                 </div>
             </div>
-
         </div>
-
-        <button id="feedback-btn" class="hide-on-print" onclick="openFeedbackModal()">💬 <span data-i18n="feedback">Feedback</span></button>
 
         <div class="main-area">
             <div class="field-wrapper" id="capture-area">
@@ -274,168 +265,518 @@
         </div>
     </div>
 
-    <!-- Modal Feedback -->
-    <div id="feedback-modal" class="modal-overlay">
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal-overlay" onclick="if(event.target === this) closeFeedbackModal()">
         <div class="modal-content">
-            <h2>💬 <span data-i18n="feed_title">Enviar Feedback</span></h2>
-            <textarea id="feedback-text" rows="6"></textarea>
-            <div class="modal-buttons">
-                <button class="tool-btn btn-red" onclick="closeFeedbackModal()" data-i18n="btn_cancel">Cancelar</button>
-                <button class="tool-btn btn-blue" id="submit-feedback-btn" onclick="submitFeedback()" data-i18n="btn_send">Enviar</button>
+            <div class="modal-header">
+                <h2 id="modal-title-feedback">Enviar Feedback</h2>
+            </div>
+            <textarea id="feedback-text" class="feedback-input" placeholder="Descreva um bug ou sugira uma idea..."></textarea>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="tool-btn" onclick="closeFeedbackModal()">Cancelar</button>
+                <button class="tool-btn btn-blue" onclick="sendFeedbackWebhook()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Layout Add/Cancel -->
+    <div id="layout-action-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 350px;">
+            <div class="modal-header">
+                <h2 id="modal-title-layout">Ação de Layout</h2>
+            </div>
+            <p id="modal-desc-layout" style="margin-bottom: 20px;">Deseja adicionar este layout ao seu palco de edições?</p>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="tool-btn" onclick="closeLayoutActionModal()">Cancelar</button>
+                <button class="tool-btn btn-blue" onclick="confirmLayoutAdd()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals (Toasts e Loaders) -->
+    <div id="toast-popup"></div>
+
+    <div id="loading-overlay" class="modal-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Modal Delete Save Confirmation -->
+    <div id="delete-modal" class="modal-overlay" onclick="if(event.target === this) closeDeleteModal()">
+        <div class="modal-content" style="width: 350px;">
+            <div class="modal-header">
+                <h2 id="modal-title-delete">Excluir Save?</h2>
+            </div>
+            <p id="modal-desc-delete" style="margin-bottom: 20px;">Deseja realmente excluir este save permanentemente?</p>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="tool-btn" onclick="closeDeleteModal()">Cancelar</button>
+                <button class="tool-btn btn-red" id="confirm-delete-btn">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Comunidade -->
+    <div id="community-modal" class="modal-overlay" onclick="if(event.target === this) closeCommunityModal()">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="modal-title-community">🌍 Layouts da Comunidade</h2>
+                <button class="close-btn" onclick="closeCommunityModal()">×</button>
+            </div>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center;">
+                <button class="tool-btn btn-purple" id="btn-publish" onclick="publishCurrentLayout()" style="width:250px;">+ Publicar Meu Save Atual</button>
+                <span id="admin-select-warning" style="color: #fbbf24; font-weight: bold; display: none;">⚠️ Selecione um layout abaixo para substituir/republicar!</span>
+            </div>
+            <div class="community-container">
+                <div class="community-grid" id="community-grid">
+                    <!-- Cards de Layouts carregarão aqui -->
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        function playSound(type = 'pop') {}
+
         // ==========================================
-        // CONEXÃO SUPABASE REALTIME (Presence Ao Vivo)
+        // TRADUÇÃO DAS DICAS & INTERFACE (Nome base traduzido para Player)
+        // ==========================================
+        const dict = {
+            pt: {
+                title: "Dicas:", l1: "• 🖱️ <b>Arrastar:</b> Segure nos itens/pontas.", l2: "• 🔀 <b>Curvar:</b> Clique DIREITO em uma seta!", l3: "• 🗑️ <b>Excluir:</b> Duplo clique no item.",
+                groups: ["Jogadores (Max 8)", "Objetos", "Linhas (🐞)", "Símbolos Táticos"],
+                btns: ["Adicionar Vermelho", "Adicionar Azul", "⚽ Adicionar Bola", "↗️ Traçar Movimento", "🚀 Traçar Chute", "💀 Perigo", "🧊 Congelar", "⚠️ Alerta"],
+                top: ["+ NOVO SAVE", "💬 Feedback", "🌍 Comunidade", "📸 Capturar Imagem", "online"],
+                player_def: "Jogador"
+            },
+            en: {
+                title: "Tips:", l1: "• 🖱️ <b>Drag:</b> Hold items/edges.", l2: "• 🔀 <b>Curve:</b> RIGHT CLICK on an arrow!", l3: "• 🗑️ <b>Delete:</b> Double click an item.",
+                groups: ["Players (Max 8)", "Objects", "Lines (🐞)", "Tactical Symbols"],
+                btns: ["Add Red", "Add Blue", "⚽ Add Ball", "↗️ Draw Move", "🚀 Draw Kick", "💀 Danger", "🧊 Freeze", "⚠️ Alert"],
+                top: ["+ NEW SAVE", "💬 Feedback", "🌍 Community", "📸 Screenshot", "online"],
+                player_def: "Player"
+            }
+        };
+
+        function changeLanguage() {
+            const lang = document.getElementById('lang-select').value;
+            const d = dict[lang];
+            document.getElementById('dicas-title').innerHTML = d.title;
+            document.getElementById('dicas-l1').innerHTML = d.l1;
+            document.getElementById('dicas-l2').innerHTML = d.l2;
+            document.getElementById('dicas-l3').innerHTML = d.l3;
+            
+            document.getElementById('group-players').innerText = d.groups[0];
+            document.getElementById('group-objects').innerText = d.groups[1];
+            document.getElementById('group-lines').innerText = d.groups[2];
+            document.getElementById('group-tactics').innerText = d.groups[3];
+
+            document.getElementById('btn-add-red').innerText = d.btns[0];
+            document.getElementById('btn-add-blue').innerText = d.btns[1];
+            document.getElementById('btn-add-ball').innerText = d.btns[2];
+            document.getElementById('btn-draw-move').innerText = d.btns[3];
+            document.getElementById('btn-draw-kick').innerText = d.btns[4];
+            document.getElementById('btn-sym-danger').innerText = d.btns[5];
+            document.getElementById('btn-sym-freeze').innerText = d.btns[6];
+            document.getElementById('btn-sym-alert').innerText = d.btns[7];
+
+            document.getElementById('add-tab-btn').innerText = d.top[0];
+            document.getElementById('feedback-btn').innerText = d.top[1];
+            document.getElementById('community-btn').innerText = d.top[2];
+            document.getElementById('screenshot-btn').innerText = d.top[3];
+            document.getElementById('lbl-online').innerText = d.top[4];
+
+            document.querySelectorAll('.player-name').forEach(span => {
+                if (span.innerText === "Jogador" || span.innerText === "Player") {
+                    span.innerText = d.player_def;
+                }
+            });
+        }
+
+        // ==========================================
+        // MODO ADMIN (EASTER EGG 2203)
+        // ==========================================
+        let adminClicks = 0; let adminTimer = null; let isAdmin = false; let editingLayoutID = null;
+        document.getElementById('field').addEventListener('click', (e) => {
+            if(e.target.id === 'field') {
+                adminClicks++;
+                clearTimeout(adminTimer);
+                if(adminClicks === 10) {
+                    adminClicks = 0;
+                    const pass = prompt("Código Administrativo:");
+                    if(pass === "2203") {
+                        isAdmin = true;
+                        showToast("Modo de Administração Concedido", "success");
+                        if(document.getElementById('community-modal').classList.contains('active')) loadCommunityLayouts();
+                    } else if (pass) showToast("Acesso Negado", "error");
+                } else { adminTimer = setTimeout(() => adminClicks = 0, 500); }
+            }
+        });
+
+        // ==========================================
+        // FEEDBACK DISCORD WEBHOOK
+        // ==========================================
+        function openFeedbackModal() { document.getElementById('feedback-modal').classList.add('active'); }
+        function closeFeedbackModal() { document.getElementById('feedback-modal').classList.remove('active'); document.getElementById('feedback-text').value = ''; }
+        
+        async function sendFeedbackWebhook() {
+            const text = document.getElementById('feedback-text').value.trim();
+            if(!text) { showToast("Escreva algo primeiro", "warn"); return; }
+            
+            const hookUrl = 'https://discord.com/api/webhooks/1418572542607622154/Nf1wIq7nM41lSHiziL2TIKDbvoxlbFRg_62xGxYjnq-ngoRHTmRGN5eXp7Y288xKAsMi';
+            showLoading();
+            try {
+                const res = await fetch(hookUrl, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: `**Novo Feedback de [${localStorage.getItem('eggball_username') || 'Anônimo'}]**\n> ${text}` })
+                });
+                if(res.ok || res.status === 204) { showToast("Feedback enviado com sucesso!", "success"); closeFeedbackModal(); }
+                else throw new Error('Falha no POST');
+            } catch(e) {
+                showToast("Erro ao enviar webhook", "error");
+            } finally { hideLoading(); }
+        }
+
+        // ==========================================
+        // SUPABASE & IDENTIFICAÇÃO
         // ==========================================
         const supabaseUrl = 'https://oydzhzgvrdvzhpihhojz.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95ZHpoemd2cmR2emhwaWhob2p6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzMDUyMTYsImV4cCI6MjA5OTg4MTIxNn0.lQfT87sAsptZM3S3MlqXOtRBcoyxly2oR15JxUyZIEY';
-        const onlineCounterEl = document.getElementById('online-counter');
-        
-        try {
-            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-            const userId = 'user_' + Math.random().toString(36).substring(2, 15);
-            
-            const roomOne = supabase.channel('online-users', {
-                config: { presence: { key: userId } }
-            });
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-            roomOne.on('presence', { event: 'sync' }, () => {
-                const newState = roomOne.presenceState();
-                let count = 0;
-                for (let id in newState) { count += newState[id].length; }
-                onlineCounterEl.innerText = count;
-            }).subscribe(async (status) => {
-                if (status === 'SUBSCRIBED') {
-                    await roomOne.track({ online_at: new Date().toISOString() });
-                }
-            });
-        } catch(err) {
-            console.error("Erro Supabase:", err);
-            onlineCounterEl.innerText = "1";
-        }
+        let deviceUUID = localStorage.getItem('eggball_uuid');
+        if (!deviceUUID) { deviceUUID = 'user_' + Math.random().toString(36).substring(2, 15); localStorage.setItem('eggball_uuid', deviceUUID); }
+
+        const roomOne = supabaseClient.channel('online-users', { config: { presence: { key: deviceUUID } } });
+        roomOne.on('presence', { event: 'sync' }, () => {
+            const newState = roomOne.presenceState(); let count = 0; for (let id in newState) count += newState[id].length;
+            document.getElementById('online-counter').innerText = count;
+        }).subscribe(async (status) => { if (status === 'SUBSCRIBED') await roomOne.track({ online_at: new Date().toISOString() }); });
+
         // ==========================================
-
-        const translations = {
-            "pt-BR": { screenshot: "Capturar Imagem", title: "EggBall Strats", players_group: "Jogadores", add_red: "Add Vermelho", add_blue: "Add Azul", objects_group: "Objetos", add_ball: "Add Bola", lines_group: "Linhas", draw_move: "Traçar Mov.", draw_kick: "Traçar Chute", symbols_group: "Símbolos", sym_danger: "Perigo", sym_freeze: "Congelar", sym_alert: "Alerta", new_save: "+ NOVO SAVE", feedback: "Feedback", feed_title: "Feedback", btn_cancel: "Cancelar", btn_send: "Enviar", player_def: "Jogador", online_text: "online" },
-            "pt-PT": { screenshot: "Capturar Ecrã", title: "EggBall Táticas", players_group: "Jogadores", add_red: "Add Vermelho", add_blue: "Add Azul", objects_group: "Objetos", add_ball: "Add Bola", lines_group: "Linhas", draw_move: "Traçar Mov.", draw_kick: "Traçar Remate", symbols_group: "Símbolos", sym_danger: "Perigo", sym_freeze: "Congelar", sym_alert: "Alerta", new_save: "+ NOVO SAVE", feedback: "Feedback", feed_title: "Feedback", btn_cancel: "Cancelar", btn_send: "Enviar", player_def: "Jogador", online_text: "online" },
-            "en": { screenshot: "Screenshot", title: "EggBall Strats", players_group: "Players", add_red: "Add Red", add_blue: "Add Blue", objects_group: "Objects", add_ball: "Add Ball", lines_group: "Lines", draw_move: "Draw Move", draw_kick: "Draw Kick", symbols_group: "Symbols", sym_danger: "Danger", sym_freeze: "Freeze", sym_alert: "Alert", new_save: "+ NEW SAVE", feedback: "Feedback", feed_title: "Feedback", btn_cancel: "Cancel", btn_send: "Send", player_def: "Player", online_text: "online" },
-            "es": { screenshot: "Captura", title: "EggBall Tácticas", players_group: "Jugadores", add_red: "Add Rojo", add_blue: "Add Azul", objects_group: "Objetos", add_ball: "Add Balón", lines_group: "Líneas", draw_move: "Trazar Mov.", draw_kick: "Trazar Tiro", symbols_group: "Símbolos", sym_danger: "Peligro", sym_freeze: "Congelar", sym_alert: "Alerta", new_save: "+ NUEVO SAVE", feedback: "Comentarios", feed_title: "Comentarios", btn_cancel: "Cancelar", btn_send: "Enviar", player_def: "Jugador", online_text: "en línea" }
-        };
-
-        let currentLang = "pt-BR";
-        function changeLanguage(lang) {
-            currentLang = lang; const dict = translations[lang];
-            document.querySelectorAll("[data-i18n]").forEach(el => {
-                if (dict[el.getAttribute("data-i18n")]) el.innerHTML = dict[el.getAttribute("data-i18n")];
-            });
-            document.querySelectorAll('.player-name').forEach(span => {
-                if (Object.values(translations).some(t => t.player_def === span.innerText)) span.innerText = dict.player_def;
-            });
+        // UI HELPERS (Toasts e Loading)
+        // ==========================================
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast-popup');
+            toast.className = ''; toast.classList.add('toast-' + type);
+            toast.innerText = msg; toast.style.display = 'block'; toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(()=> toast.style.display = 'none', 300); }, 2000);
         }
+        function showLoading() { document.getElementById('loading-overlay').classList.add('active'); }
+        function hideLoading() { document.getElementById('loading-overlay').classList.remove('active'); }
 
-        async function takeScreenshot() {
-            const btn = document.getElementById('screenshot-btn');
-            btn.innerHTML = "⏳ Processando..."; btn.disabled = true;
-            cancelDrawingMode();
-            try {
-                const canvas = await html2canvas(document.getElementById('field'), { backgroundColor: null, scale: 2 });
-                canvas.toBlob(async (blob) => {
-                    try {
-                        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-                        alert("✅ Layout copiado para a Área de Transferência!");
-                    } catch (err) { alert("⚠️ Erro ao copiar na área de transferência."); }
-                });
-            } finally { btn.innerHTML = "📸 <span data-i18n='screenshot'>" + translations[currentLang].screenshot + "</span>"; btn.disabled = false; }
-        }
-
-        function openFeedbackModal() { document.getElementById('feedback-modal').classList.add('active'); }
-        function closeFeedbackModal() { document.getElementById('feedback-modal').classList.remove('active'); document.getElementById('feedback-text').value = ''; }
-        async function submitFeedback() { closeFeedbackModal(); }
-
+        // ==========================================
+        // LOGICA DE SAVES E ABAS
+        // ==========================================
         const field = document.getElementById('field');
         const tabsBar = document.getElementById('tabs-bar');
+        const addTabBtn = document.getElementById('add-tab-btn');
         const layersContainer = document.getElementById('save-layers-container');
-        let tabCount = 0; let activeTabId = null; const history = {};
+        let tabCount = 0; let activeTabId = null; let tabToDelete = null;
 
-        function initHistory(tabId) { if (!history[tabId]) history[tabId] = { past: [], future: [] }; }
-        function saveState(tabId) {
-            if (!tabId) return; initHistory(tabId);
-            const layer = document.getElementById(`layer-${tabId}`);
-            if (layer) { history[tabId].past.push(layer.innerHTML); if (history[tabId].past.length > 50) history[tabId].past.shift(); history[tabId].future = []; }
-        }
+        function addTab(initialData = null) {
+            const existingTabs = document.querySelectorAll('.tab').length;
+            if (existingTabs >= 10) { showToast("Máximo de saves atingido", "warn"); return null; }
+            tabCount++; const tabId = `save-${tabCount}`;
+            const tabBtn = document.createElement('div'); 
+            tabBtn.className = 'tab'; tabBtn.id = `btn-${tabId}`; 
+            tabBtn.innerHTML = `SAVE ${tabCount} <div class="tab-delete-zone"></div>`; 
+            
+            tabBtn.onclick = (e) => {
+                if (e.target.classList.contains('tab-delete-zone')) { promptDeleteTab(tabId); return; }
+                switchTab(tabId);
+            };
+            tabBtn.ondblclick = () => { promptDeleteTab(tabId); };
+            tabsBar.insertBefore(tabBtn, addTabBtn);
 
-        function undo() { if(activeTabId && history[activeTabId].past.length > 1){ const c = history[activeTabId].past.pop(); history[activeTabId].future.push(c); document.getElementById(`layer-${activeTabId}`).innerHTML = history[activeTabId].past[history[activeTabId].past.length-1]; } }
-        function redo() { if(activeTabId && history[activeTabId].future.length > 0){ const n = history[activeTabId].future.pop(); history[activeTabId].past.push(n); document.getElementById(`layer-${activeTabId}`).innerHTML = n; } }
-
-        function addTab() {
-            if (tabCount >= 10) return; tabCount++; const tabId = `save-${tabCount}`;
-            const tabBtn = document.createElement('div'); tabBtn.className = 'tab'; tabBtn.id = `btn-${tabId}`; tabBtn.innerText = `SAVE ${tabCount}`; tabBtn.onclick = () => switchTab(tabId);
-            tabsBar.insertBefore(tabBtn, tabsBar.lastElementChild);
-            const layer = document.createElement('div'); layer.className = 'save-layer'; layer.id = `layer-${tabId}`; layer.innerHTML = `<svg class="drawing-layer"></svg><div class="drag-layer"></div>`;
-            layersContainer.appendChild(layer); initHistory(tabId); saveState(tabId); switchTab(tabId);
+            const layer = document.createElement('div'); layer.className = 'save-layer'; layer.id = `layer-${tabId}`; 
+            layer.innerHTML = initialData ? initialData : `<svg class="drawing-layer"></svg><div class="drag-layer"></div>`;
+            layersContainer.appendChild(layer); 
+            switchTab(tabId);
+            return tabId;
         }
 
         function switchTab(tabId) {
+            if(!document.getElementById(`btn-${tabId}`)) return;
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.save-layer').forEach(l => l.classList.remove('active'));
             document.getElementById(`btn-${tabId}`).classList.add('active');
-            document.getElementById(`layer-${tabId}`).classList.add('active'); activeTabId = tabId;
+            document.getElementById(`layer-${tabId}`).classList.add('active'); 
+            activeTabId = tabId;
+        }
+
+        function promptDeleteTab(tabId) { tabToDelete = tabId; document.getElementById('delete-modal').classList.add('active'); }
+        function closeDeleteModal() { document.getElementById('delete-modal').classList.remove('active'); tabToDelete = null; }
+        document.getElementById('confirm-delete-btn').onclick = () => {
+            if (tabToDelete) {
+                document.getElementById(`btn-${tabToDelete}`).remove();
+                document.getElementById(`layer-${tabToDelete}`).remove();
+                const remainingTabs = document.querySelectorAll('.tab');
+                if (remainingTabs.length > 0) switchTab(remainingTabs[0].id.replace('btn-', '')); else activeTabId = null;
+            }
+            closeDeleteModal(); showToast("Aba apagada", "success");
         }
 
         function getActiveDragLayer() { return document.querySelector(`#layer-${activeTabId} .drag-layer`); }
         function getActiveDrawLayer() { return document.querySelector(`#layer-${activeTabId} .drawing-layer`); }
 
-        function scheduleTranslucency(element) {
-            if (!element) return;
-            const container = element.querySelector('.player-label-container');
-            if (container) {
-                container.classList.remove('translucent');
-                clearTimeout(container.timeoutId);
-                container.timeoutId = setTimeout(() => { container.classList.add('translucent'); }, 1000);
+        // ==========================================
+        // COMUNIDADE: INTERFACE MELHORADA
+        // ==========================================
+        let loadedLayoutsCache = []; 
+        let pendingLayoutHTML = "";
+        let selectedCommunityLayoutIdForOverride = null;
+
+        async function openCommunityModal() {
+            document.getElementById('community-modal').classList.add('active');
+            selectedCommunityLayoutIdForOverride = null;
+            if(isAdmin) {
+                document.getElementById('btn-publish').innerText = "🔄 Republicar Layout Selecionado";
+                document.getElementById('admin-select-warning').style.display = 'inline';
+            } else {
+                document.getElementById('btn-publish').innerText = "+ Publicar Meu Save Atual";
+                document.getElementById('admin-select-warning').style.display = 'none';
             }
+            loadCommunityLayouts();
+        }
+        function closeCommunityModal() { document.getElementById('community-modal').classList.remove('active'); }
+
+        async function loadCommunityLayouts() {
+            const grid = document.getElementById('community-grid');
+            grid.innerHTML = '<div class="loader" style="margin: 40px auto; border-color: rgba(16,185,129,0.2); border-top-color: var(--accent);"></div>';
+            
+            const { data, error } = await supabaseClient.from('community_layouts').select('*').order('likes', { ascending: false });
+            if (error || !data) { grid.innerHTML = `<div class="empty-message">Erro de conexão.</div>`; return; }
+            if (data.length === 0) { grid.innerHTML = `<div class="empty-message">Ainda não há nenhuma publicação</div>`; return; }
+
+            loadedLayoutsCache = data;
+            grid.innerHTML = '';
+            
+            data.forEach((layout, index) => {
+                const card = document.createElement('div');
+                card.className = 'layout-card';
+                card.id = `layout-card-${layout.id}`;
+                
+                if (isAdmin && selectedCommunityLayoutIdForOverride === layout.id) {
+                    card.classList.add('selected-for-override');
+                }
+
+                card.onclick = (e) => {
+                    if(e.target.closest('button')) return; 
+                    if(isAdmin) {
+                        selectedCommunityLayoutIdForOverride = layout.id;
+                        document.querySelectorAll('.layout-card').forEach(c => c.classList.remove('selected-for-override'));
+                        card.classList.add('selected-for-override');
+                        showToast("Layout da comunidade selecionado para reescrita!", "warn");
+                    } else {
+                        promptAddLayout(index);
+                    }
+                };
+
+                let adminTools = isAdmin ? `
+                    <div class="admin-controls">
+                        <button class="admin-btn edit" onclick="event.stopPropagation(); adminEditLayout(${index})">✏️ Base</button>
+                        <button class="admin-btn edit" onclick="event.stopPropagation(); adminEditAuthor(${index})">📝 Autor</button>
+                        <button class="admin-btn" onclick="event.stopPropagation(); adminSetLikes('${layout.id}')">❤️ Set</button>
+                        <button class="admin-btn btn-danger" onclick="event.stopPropagation(); adminDeleteLayout('${layout.id}')">🗑️ Del</button>
+                    </div>
+                ` : '';
+
+                card.innerHTML = `
+                    <img src="${layout.thumbnail}" class="layout-thumb" alt="Thumbnail">
+                    <div class="layout-info">
+                        <div class="layout-title">Por: ${layout.username}</div>
+                        <div class="layout-actions">
+                            <button class="like-btn" onclick="likeLayout('${layout.id}', '${layout.author_id}')">
+                                ❤️ <span id="like-count-${layout.id}">${layout.likes}</span>
+                            </button>
+                        </div>
+                        ${adminTools}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
         }
 
+        function promptAddLayout(index) {
+            pendingLayoutHTML = loadedLayoutsCache[index].layout_data;
+            closeCommunityModal(); 
+            document.getElementById('layout-action-modal').classList.add('active'); 
+        }
+        function closeLayoutActionModal() { document.getElementById('layout-action-modal').classList.remove('active'); pendingLayoutHTML = ""; }
+        function confirmLayoutAdd() {
+            if(pendingLayoutHTML) {
+                loadLayoutProcess(pendingLayoutHTML, null);
+            }
+            closeLayoutActionModal();
+        }
+
+        async function likeLayout(id, authorId) {
+            if (!isAdmin && authorId === deviceUUID) { showToast("Você não pode curtir sua obra", "error"); return; }
+            const countSpan = document.getElementById(`like-count-${id}`);
+            let likes = parseInt(countSpan.innerText) + 1;
+            countSpan.innerText = likes;
+            await supabaseClient.from('community_layouts').update({ likes: likes }).eq('id', id);
+        }
+
+        async function adminSetLikes(id) {
+            let n = prompt("Definir exato de curtidas:");
+            if(n !== null && !isNaN(n)) { await supabaseClient.from('community_layouts').update({likes: parseInt(n)}).eq('id', id); loadCommunityLayouts(); }
+        }
+        
+        async function adminDeleteLayout(id) {
+            if(confirm("Confirmar EXCLUSÃO permanente deste layout do Supabase?")) {
+                showLoading();
+                try {
+                    const { error } = await supabaseClient.from('community_layouts').delete().eq('id', id);
+                    if (error) throw error;
+                    showToast("Layout excluído do Supabase com sucesso", "success");
+                    if (selectedCommunityLayoutIdForOverride === id) selectedCommunityLayoutIdForOverride = null;
+                    loadCommunityLayouts();
+                } catch(e) {
+                    showToast("Erro ao excluir do Supabase", "error");
+                    console.error(e);
+                } finally {
+                    hideLoading();
+                }
+            }
+        }
+        
+        async function adminEditAuthor(index) {
+            const layout = loadedLayoutsCache[index];
+            let newName = prompt("Modificar nome do autor deste layout:", layout.username);
+            if(newName !== null && newName.trim() !== "") {
+                showLoading();
+                try {
+                    const { error } = await supabaseClient.from('community_layouts').update({ username: newName.trim() }).eq('id', layout.id);
+                    if(error) throw error;
+                    showToast("Nome do autor modificado!", "success");
+                    loadCommunityLayouts();
+                } catch(e) {
+                    showToast("Erro ao editar nome", "error");
+                    console.error(e);
+                } finally {
+                    hideLoading();
+                }
+            }
+        }
+        
+        function adminEditLayout(index) {
+            editingLayoutID = loadedLayoutsCache[index].id;
+            selectedCommunityLayoutIdForOverride = loadedLayoutsCache[index].id;
+            closeCommunityModal();
+            loadLayoutProcess(loadedLayoutsCache[index].layout_data, activeTabId || null);
+            showToast("Modo de Edição Ativo. Republicar atualizará este layout na comunidade.", "warn");
+        }
+
+        // ==========================================
+        // COMUNIDADE: PUBLICAR
+        // ==========================================
+        let lastPublishTime = localStorage.getItem('eggball_last_pub') || 0;
+
+        async function publishCurrentLayout() {
+            if (!activeTabId) return;
+            const now = Date.now();
+            if (!isAdmin && now - lastPublishTime < 60000) { showToast("Aguarde 1 min entre publicações.", "warn"); return; }
+
+            if (isAdmin && !selectedCommunityLayoutIdForOverride) {
+                showToast("Por favor, selecione primeiro para qual layout da lista a nova publicação deve ir!", "error");
+                return;
+            }
+
+            let username = localStorage.getItem('eggball_username');
+            if (!username && !isAdmin) {
+                username = prompt("Insira seu nome de usuário para publicar:");
+                if (!username || username.trim() === '') return;
+                localStorage.setItem('eggball_username', username.trim());
+            } else if (isAdmin) {
+                username = "ADMIN OVERRIDE";
+            }
+
+            showLoading();
+            const currentLayerHTML = document.getElementById(`layer-${activeTabId}`).innerHTML;
+
+            try {
+                document.body.classList.add('hide-on-print'); 
+                const canvas = await html2canvas(document.getElementById('field'), { backgroundColor: '#529754', scale: 0.5 });
+                document.body.classList.remove('hide-on-print');
+                const thumbnailBase64 = canvas.toDataURL('image/jpeg', 0.6);
+
+                if (isAdmin && selectedCommunityLayoutIdForOverride) {
+                    const { error } = await supabaseClient.from('community_layouts').update({
+                        layout_data: currentLayerHTML, thumbnail: thumbnailBase64
+                    }).eq('id', selectedCommunityLayoutIdForOverride);
+                    if (error) throw error;
+                    showToast("Layout da comunidade substituído/republicado com sucesso!", "success");
+                    selectedCommunityLayoutIdForOverride = null;
+                } else {
+                    const { error } = await supabaseClient.from('community_layouts').insert([{
+                        username: username, author_id: deviceUUID, layout_data: currentLayerHTML, thumbnail: thumbnailBase64, likes: 0
+                    }]);
+                    if (error) throw error;
+                    showToast("Publicado na Comunidade!", "success");
+                }
+                localStorage.setItem('eggball_last_pub', Date.now()); lastPublishTime = Date.now();
+                loadCommunityLayouts(); 
+            } catch (err) { console.error(err); showToast("Erro ao publicar.", "error"); } 
+            finally { hideLoading(); }
+        }
+
+        function loadLayoutProcess(htmlData, targetTabId) {
+            showLoading();
+            setTimeout(() => {
+                try {
+                    if (targetTabId) { document.getElementById(`layer-${targetTabId}`).innerHTML = htmlData; switchTab(targetTabId); } 
+                    else { const newId = addTab(htmlData); if (newId) switchTab(newId); }
+                    hideLoading(); showToast("Layout carregado!", "success"); reattachDragEvents();
+                } catch(e) { hideLoading(); showToast("Falha na carga", "error"); }
+            }, 600);
+        }
+
+        function reattachDragEvents() {
+            if(!activeTabId) return;
+            document.querySelectorAll(`#layer-${activeTabId} .player-label-container`).forEach(el => {
+                el.classList.remove('translucent'); setTimeout(()=> el.classList.add('translucent'), 1000);
+            });
+        }
+
+        // ==========================================
+        // FERRAMENTAS DO CAMPO E COLISÃO APRIMORADA
+        // ==========================================
+        let spawnOffsetFactor = 0; 
+
         function addElement(type) {
+            if (!activeTabId) return;
             cancelDrawingMode();
-            const el = document.createElement('div'); el.className = 'drag-item'; el.style.left = '50%'; el.style.top = '50%';
+            const el = document.createElement('div'); el.className = 'drag-item'; 
             
+            spawnOffsetFactor = (spawnOffsetFactor + 15) % 100;
+            let finalX = 400 + spawnOffsetFactor; 
+            let finalY = 225 + (spawnOffsetFactor % 30); 
+            
+            el.style.left = `${finalX}px`; el.style.top = `${finalY}px`;
+            
+            const currentLang = document.getElementById('lang-select').value;
+            const defaultName = dict[currentLang].player_def;
+
             if (type === 'player-blue' || type === 'player-red') {
                 el.classList.add(type); el.dataset.isPlayer = "true";
-                el.innerHTML = `<div class="player-circle"></div><div class="player-label-container"><span class="player-name">${translations[currentLang].player_def}</span><span class="edit-icon">✏️</span></div>`;
+                el.innerHTML = `<div class="player-circle"></div><div class="player-label-container"><span class="player-name">${defaultName}</span><span class="edit-icon">✏️</span></div>`;
             } else if (type === 'ball') el.innerHTML = `<div class="ball"></div>`;
             else { el.classList.add('icon-item'); const i = { 'danger': '💀', 'freeze': '🧊', 'alert': '⚠️'}; el.innerHTML = i[type] || '📍'; }
             
             getActiveDragLayer().appendChild(el);
-            resolveCollision(el, 400, 225); saveState(activeTabId);
-            if (el.dataset.isPlayer) scheduleTranslucency(el);
-        }
-
-        function resolveCollision(element, newX, newY) {
-            if (element.dataset.isPlayer !== "true") { element.style.left = `${newX}px`; element.style.top = `${newY}px`; return; }
-            let fX = newX, fY = newY;
-            getActiveDragLayer().querySelectorAll('[data-is-player="true"]').forEach(p => {
-                if (p === element) return;
-                const pX = parseFloat(p.style.left), pY = parseFloat(p.style.top);
-                if (Math.hypot(fX - pX, fY - pY) < 42) { const a = Math.atan2(fY - pY, fX - pX) || Math.random()*6; fX = pX + Math.cos(a)*42; fY = pY + Math.sin(a)*42; }
-            });
-            element.style.left = `${Math.max(20, Math.min(fX, 780))}px`; element.style.top = `${Math.max(20, Math.min(fY, 430))}px`;
+            setTimeout(()=> { const cont = el.querySelector('.player-label-container'); if(cont) cont.classList.add('translucent'); }, 1000);
         }
 
         document.addEventListener('dblclick', (e) => {
             const item = e.target.closest('.drag-item') || e.target.closest('.drawn-path-group');
-            if (item) { item.remove(); saveState(activeTabId); }
+            if (item) { item.remove(); }
         });
 
         document.addEventListener('click', (e) => {
             const edit = e.target.closest('.edit-icon');
             if (edit) {
-                const name = edit.previousElementSibling;
-                const container = edit.closest('.player-label-container');
-                container.classList.remove('translucent'); clearTimeout(container.timeoutId);
-                name.contentEditable = true; name.focus();
+                const name = edit.previousElementSibling; const container = edit.closest('.player-label-container');
+                container.classList.remove('translucent'); name.contentEditable = true; name.focus();
                 const sel = window.getSelection(); sel.removeAllRanges();
                 const r = document.createRange(); r.selectNodeContents(name); sel.addRange(r);
             }
@@ -443,17 +784,28 @@
 
         document.addEventListener('focusout', (e) => {
             if (e.target.classList.contains('player-name')) {
-                e.target.contentEditable = false; saveState(activeTabId);
-                scheduleTranslucency(e.target.closest('.drag-item'));
+                e.target.contentEditable = false;
+                setTimeout(()=> e.target.closest('.player-label-container').classList.add('translucent'), 1000);
             }
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.target.isContentEditable) return;
-            if (e.ctrlKey && e.key.toLowerCase() === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
-        });
+        async function takeScreenshot() {
+            const btn = document.getElementById('screenshot-btn');
+            btn.innerHTML = "⏳ Processando..."; btn.disabled = true; cancelDrawingMode();
+            try {
+                const canvas = await html2canvas(document.getElementById('field'), { backgroundColor: null, scale: 2 });
+                canvas.toBlob(async (blob) => {
+                    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+                    showToast("✅ Imagem copiada para Área de Transferência!");
+                });
+            } catch(e) { showToast("Erro na captura", "error"); } 
+            finally { btn.innerHTML = "📸 Capturar Imagem"; btn.disabled = false; }
+        }
 
-        let isDragging = false; let currentDrag = null; let wasDragged = false;
+        // ==========================================
+        // SISTEMA DE DESENHO & ARRASTO
+        // ==========================================
+        let isDragging = false; let currentDrag = null; 
         let drawingMode = null; let isDrawing = false; let tempGroup = null;
         let editingGroup = null; let lineEditMode = null; let dragOffset = { x:0, y:0 };
 
@@ -470,34 +822,29 @@
         }
 
         function updatePath(g) {
-            const x1 = g.dataset.x1, y1 = g.dataset.y1;
-            const x2 = g.dataset.x2, y2 = g.dataset.y2;
+            const x1 = g.dataset.x1, y1 = g.dataset.y1; const x2 = g.dataset.x2, y2 = g.dataset.y2;
             const bx = g.dataset.bx, by = g.dataset.by;
-            let d = `M ${x1} ${y1}`;
-            if (bx && by) d += ` L ${bx} ${by}`;
-            d += ` L ${x2} ${y2}`;
-            g.querySelector('.hitbox').setAttribute("d", d);
-            g.querySelector('.visible-line').setAttribute("d", d);
+            let d = `M ${x1} ${y1}`; if (bx && by) d += ` L ${bx} ${by}`; d += ` L ${x2} ${y2}`;
+            g.querySelector('.hitbox').setAttribute("d", d); g.querySelector('.visible-line').setAttribute("d", d);
         }
 
         field.addEventListener('contextmenu', (e) => {
             const hitbox = e.target.closest('.hitbox');
             if (hitbox && !drawingMode) {
                 e.preventDefault(); const g = hitbox.parentElement;
-                const r = field.getBoundingClientRect();
-                const mx = e.clientX - r.left, my = e.clientY - r.top;
+                const r = field.getBoundingClientRect(); const mx = e.clientX - r.left, my = e.clientY - r.top;
                 if (g.dataset.bx) { g.removeAttribute('data-bx'); g.removeAttribute('data-by'); } 
                 else { g.dataset.bx = mx; g.dataset.by = my; }
-                updatePath(g); saveState(activeTabId);
+                updatePath(g);
             }
         });
 
         field.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.player-label-container') || e.button !== 0) return;
+            if (e.target.closest('.player-label-container') || e.button !== 0 || e.target.id === 'field') return;
             const r = field.getBoundingClientRect();
             const clickX = e.clientX - r.left, clickY = e.clientY - r.top;
-
             const hitbox = e.target.closest('.hitbox');
+            
             if (hitbox && !drawingMode) {
                 editingGroup = hitbox.parentElement;
                 const x1 = parseFloat(editingGroup.dataset.x1), y1 = parseFloat(editingGroup.dataset.y1);
@@ -520,43 +867,34 @@
                 tempGroup.dataset.x2 = clickX; tempGroup.dataset.y2 = clickY;
 
                 const hit = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                hit.setAttribute("class", "hitbox"); hit.setAttribute("stroke", "transparent");
-                hit.setAttribute("stroke-width", "25"); hit.setAttribute("fill", "none");
+                hit.setAttribute("class", "hitbox"); hit.setAttribute("stroke", "transparent"); hit.setAttribute("stroke-width", "25"); hit.setAttribute("fill", "none");
 
                 const vis = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                vis.setAttribute("class", "anim-line visible-line"); vis.setAttribute("stroke", drawingMode.color);
-                vis.setAttribute("stroke-width", "4"); vis.setAttribute("fill", "none");
+                vis.setAttribute("class", "anim-line visible-line"); vis.setAttribute("stroke", drawingMode.color); vis.setAttribute("stroke-width", "4"); vis.setAttribute("fill", "none");
 
                 tempGroup.appendChild(hit); tempGroup.appendChild(vis);
-                updatePath(tempGroup); getActiveDrawLayer().appendChild(tempGroup);
-                e.preventDefault();
+                updatePath(tempGroup); getActiveDrawLayer().appendChild(tempGroup); e.preventDefault();
             } else {
                 const dragItem = e.target.closest('.drag-item');
                 if (dragItem) {
-                    isDragging = true; currentDrag = dragItem;
-                    currentDrag.style.zIndex = 1000; wasDragged = false;
+                    isDragging = true; currentDrag = dragItem; currentDrag.style.zIndex = 1000;
                     const container = currentDrag.querySelector('.player-label-container');
-                    if (container) { container.classList.remove('translucent'); clearTimeout(container.timeoutId); }
+                    if (container) container.classList.remove('translucent');
                 }
             }
         });
 
         document.addEventListener('mousemove', (e) => {
-            const r = field.getBoundingClientRect();
-            const mouseX = e.clientX - r.left, mouseY = e.clientY - r.top;
-
-            if (isDrawing && tempGroup) {
-                tempGroup.dataset.x2 = mouseX; tempGroup.dataset.y2 = mouseY; updatePath(tempGroup);
-            } else if (editingGroup) {
+            const r = field.getBoundingClientRect(); const mouseX = e.clientX - r.left, mouseY = e.clientY - r.top;
+            if (isDrawing && tempGroup) { tempGroup.dataset.x2 = mouseX; tempGroup.dataset.y2 = mouseY; updatePath(tempGroup); } 
+            else if (editingGroup) {
                 if (lineEditMode === 'start') { editingGroup.dataset.x1 = mouseX; editingGroup.dataset.y1 = mouseY; }
                 else if (lineEditMode === 'end') { editingGroup.dataset.x2 = mouseX; editingGroup.dataset.y2 = mouseY; }
                 else if (lineEditMode === 'bounce') { editingGroup.dataset.bx = mouseX; editingGroup.dataset.by = mouseY; }
                 else if (lineEditMode === 'move') {
                     const dx = mouseX - dragOffset.x, dy = mouseY - dragOffset.y;
-                    editingGroup.dataset.x1 = parseFloat(editingGroup.dataset.x1) + dx;
-                    editingGroup.dataset.y1 = parseFloat(editingGroup.dataset.y1) + dy;
-                    editingGroup.dataset.x2 = parseFloat(editingGroup.dataset.x2) + dx;
-                    editingGroup.dataset.y2 = parseFloat(editingGroup.dataset.y2) + dy;
+                    editingGroup.dataset.x1 = parseFloat(editingGroup.dataset.x1) + dx; editingGroup.dataset.y1 = parseFloat(editingGroup.dataset.y1) + dy;
+                    editingGroup.dataset.x2 = parseFloat(editingGroup.dataset.x2) + dx; editingGroup.dataset.y2 = parseFloat(editingGroup.dataset.y2) + dy;
                     if (editingGroup.dataset.bx) { editingGroup.dataset.bx = parseFloat(editingGroup.dataset.bx) + dx; editingGroup.dataset.by = parseFloat(editingGroup.dataset.by) + dy; }
                     dragOffset = { x: mouseX, y: mouseY };
                 }
@@ -564,25 +902,21 @@
             } else if (isDragging && currentDrag) {
                 currentDrag.style.left = `${Math.max(-20, Math.min(mouseX, r.width + 20))}px`;
                 currentDrag.style.top = `${Math.max(-20, Math.min(mouseY, r.height + 20))}px`;
-                wasDragged = true;
             }
         });
 
         document.addEventListener('mouseup', (e) => {
-            if (isDrawing && tempGroup) { isDrawing = false; tempGroup = null; cancelDrawingMode(); saveState(activeTabId); }
-            if (editingGroup) { editingGroup = null; lineEditMode = null; saveState(activeTabId); }
+            if (isDrawing && tempGroup) { isDrawing = false; tempGroup = null; cancelDrawingMode(); }
+            if (editingGroup) { editingGroup = null; lineEditMode = null; }
             if (currentDrag) {
                 currentDrag.style.zIndex = "10";
-                if (wasDragged) {
-                    const r = field.getBoundingClientRect();
-                    resolveCollision(currentDrag, e.clientX - r.left, e.clientY - r.top); saveState(activeTabId);
-                }
-                scheduleTranslucency(currentDrag);
-                isDragging = false; currentDrag = null; wasDragged = false;
+                const container = currentDrag.querySelector('.player-label-container');
+                if (container) setTimeout(()=> container.classList.add('translucent'), 1000);
+                isDragging = false; currentDrag = null;
             }
         });
 
-        addTab(); changeLanguage('pt-BR');
+        addTab();
     </script>
 </body>
 </html>
